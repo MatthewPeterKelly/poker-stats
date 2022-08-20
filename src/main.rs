@@ -1,15 +1,23 @@
 pub struct Card {
-    index: i32,
+    id: i32,
 }
 
 impl Card {
-    /// Returns the suit of this [`Card`].
+    /// Returns the suit (club, spade, heart, diamond) of this [`Card`],
+    /// where the suit is represented as an integer.
     fn suit(&self) -> i32 {
-        self.index % 4
+        self.id % 4
+    }
+
+    /// Returns the "index" (ace, two, three, ... jack, queen, king) of the [`Card`].
+    fn index(&self) -> i32 {
+        self.id / 4
     }
 }
 
 fn main() {
-    let card = Card { index: 9 };
-    println!("Hello, world! Your card suit is: {}", card.suit());
+    for id in 0..52 {
+        let card = Card { id };
+        println!("Suit: {}, Index: {}", card.suit(), card.index());
+    }
 }
