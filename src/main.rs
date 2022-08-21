@@ -1,3 +1,4 @@
+use array_init;
 use rand::Rng;
 
 pub struct Card {
@@ -15,6 +16,21 @@ impl Card {
     fn index(&self) -> i32 {
         self.id / 4
     }
+}
+
+fn draw_five_cards() -> [Card; 5] {
+    // let hand = [Card; 5];
+    // for i in 0..5 {
+    //     hand[i] = Card {
+    //         id: rand::thread_rng().gen_range(0..51),
+    //     };
+    // }
+    // hand
+
+    // https://docs.rs/array-init/latest/array_init/#  neat
+    let hand: [Card; 5] = array_init::array_init(|i: usize| Card {
+        id: rand::thread_rng().gen_range(0..51),
+    });
 }
 
 fn main() {
