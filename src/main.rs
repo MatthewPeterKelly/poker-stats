@@ -25,7 +25,17 @@ impl Card {
 }
 
 fn draw_five_cards() -> [Card; 5] {
-    let hand: [Card; 5] = array_init::array_init(|_| Card::draw_random_card());
+    // Draw five cards with replacement
+    let mut hand: [Card; 5] = array_init::array_init(|_| Card::draw_random_card());
+    // Replace any duplicates.
+    for i in 1..5 {
+        for j in 0..i {
+            if hand[j].id == hand[i].id {
+                hand[i] = Card::draw_random_card();
+            }
+        }
+    }
+
     hand
 }
 
