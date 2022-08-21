@@ -19,18 +19,10 @@ impl Card {
 }
 
 fn draw_five_cards() -> [Card; 5] {
-    // let hand = [Card; 5];
-    // for i in 0..5 {
-    //     hand[i] = Card {
-    //         id: rand::thread_rng().gen_range(0..51),
-    //     };
-    // }
-    // hand
-
-    // https://docs.rs/array-init/latest/array_init/#  neat
-    let hand: [Card; 5] = array_init::array_init(|i: usize| Card {
+    let hand: [Card; 5] = array_init::array_init(|_| Card {
         id: rand::thread_rng().gen_range(0..51),
     });
+    hand
 }
 
 fn main() {
@@ -38,10 +30,8 @@ fn main() {
         let card = Card { id };
         println!("Sorted:  Suit: {}, Index: {}", card.suit(), card.index());
     }
-    for _ in 0..10 {
-        let card = Card {
-            id: rand::thread_rng().gen_range(0..51),
-        };
+    let hand = draw_five_cards();
+    for card in hand {
         println!("Random:  Suit: {}, Index: {}", card.suit(), card.index());
     }
 }
