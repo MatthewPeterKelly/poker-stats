@@ -34,6 +34,22 @@ impl Card {
         for i in 1..N {
             for j in 0..i {
                 while hand[j].id == hand[i].id {
+                    // There is a bug here!
+                    // What happens if the card we draw is ALSO a match?
+                    //
+                    // The fix: we need to break this out into a utility function
+                    // that finds a card that doesn't match any in a slice.
+                    //
+                    // UGH: this actually is non-trivial
+                    // https://timvieira.github.io/blog/post/2019/09/16/algorithms-for-sampling-without-replacement/
+                    //
+                    // New plan: how rare is it to just pull a valid hand?
+                    //
+                    // >>> (1) * (51/52.) * (50 / 52.) * (49 / 52.) * (48 /52.)
+                    // 0.8202837785791814
+                    // >>> (1) * (51/52.) * (50 / 52.) * (49 / 52.) * (48 /52.) * (47 / 52.) * (46 / 52.)
+                    // 0.6558629916006621
+                    //
                     hand[i] = Card::draw_random_card();
                 }
             }
@@ -89,8 +105,17 @@ mod tests {
     fn unique_cards_in_randomly_drawn_hand_test() {
         for trial in 0..1000 {
             let cards = Card::draw_seven_cards();
+
+            println!("");
+            for my_card in cards.iter() {
+                print!("{} ", my_card);
+            }
+            println!("");
+
             for i in 1..7 {
                 for j in 0..i {
+                    println!("i: {i}, j: {j} ");
+
                     assert_ne!(
                         cards[i].id, cards[j].id,
                         "trial: {trial}, i: {i}, j: {j}, left: {}, right: {}",
