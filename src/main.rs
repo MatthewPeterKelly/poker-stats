@@ -24,19 +24,26 @@ impl Card {
     }
 }
 
-fn draw_five_cards() -> [Card; 5] {
-    // Draw five cards with replacement
-    let mut hand: [Card; 5] = array_init::array_init(|_| Card::draw_random_card());
+fn draw_without_replacement<const N: usize>() -> [Card; N] {
+    // Draw N cards with replacement
+    let mut hand: [Card; N] = array_init::array_init(|_| Card::draw_random_card());
     // Replace any duplicates.
-    for i in 1..5 {
+    for i in 1..N {
         for j in 0..i {
             if hand[j].id == hand[i].id {
                 hand[i] = Card::draw_random_card();
             }
         }
     }
-
     hand
+}
+
+fn draw_five_cards() -> [Card; 5] {
+    draw_without_replacement::<5>()
+}
+
+fn draw_seven_cards() -> [Card; 7] {
+    draw_without_replacement::<7>()
 }
 
 fn main() {
@@ -44,8 +51,18 @@ fn main() {
         let card = Card { id };
         println!("Sorted:  Suit: {}, Index: {}", card.suit(), card.index());
     }
-    let hand = draw_five_cards();
-    for card in hand {
-        println!("Random:  Suit: {}, Index: {}", card.suit(), card.index());
+    for card in draw_five_cards() {
+        println!(
+            "Five Cards:  Suit: {}, Index: {}",
+            card.suit(),
+            card.index()
+        );
+    }
+    for card in draw_seven_cards() {
+        println!(
+            "Seven Cards:  Suit: {}, Index: {}",
+            card.suit(),
+            card.index()
+        );
     }
 }
