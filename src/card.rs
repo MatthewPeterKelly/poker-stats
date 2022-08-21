@@ -78,3 +78,26 @@ impl fmt::Display for Card {
         write!(f, "{}{}", self.index_to_string(), self.suit_to_string())
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::card::Card;
+
+    /// Ensure that
+    #[test]
+    fn unique_cards_in_randomly_drawn_hand_test() {
+        for trial in 0..1000 {
+            let cards = Card::draw_seven_cards();
+            for i in 1..7 {
+                for j in 0..i {
+                    assert_ne!(
+                        cards[i].id, cards[j].id,
+                        "trial: {trial}, i: {i}, j: {j}, left: {}, right: {}",
+                        cards[i], cards[j]
+                    );
+                }
+            }
+        }
+    }
+}
