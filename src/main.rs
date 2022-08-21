@@ -1,5 +1,6 @@
 use array_init;
 use rand::Rng;
+use std::fmt;
 
 pub struct Card {
     id: i32,
@@ -68,27 +69,31 @@ impl Card {
             _ => one_based_index.to_string(),
         }
     }
+}
 
-    /// Return owned string representing the card. Examples:
-    /// K♥ A♣ Q♥ 3♦ 7 8♠ 2♥
-    pub fn to_string(&self) -> String {
-        format!("{}{}", self.index_to_string(), self.suit_to_string())
+/// Return owned string representing the card. Examples:
+/// K♥ A♣ Q♥ 3♦ 7 8♠ 2♥
+impl fmt::Display for Card {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}{}", self.index_to_string(), self.suit_to_string())
     }
 }
 
 fn main() {
     for id in 0..52 {
         let card = Card { id };
-        println!("Sorted:  {}", card.to_string());
+        println!("Sorted:  {}", card);
     }
-    println!("Five Cards: ");
+
+    print!("Five Cards: ");
     for card in Card::draw_five_cards() {
-        print!("{} ", card.to_string());
+        print!("{} ", card);
     }
     println!("");
-    println!("Seven Cards: ");
+
+    print!("Seven Cards: ");
     for card in Card::draw_seven_cards() {
-        print!("{} ", card.to_string());
+        print!("{} ", card);
     }
     println!("");
 }
