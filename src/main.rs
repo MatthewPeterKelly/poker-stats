@@ -47,25 +47,48 @@ impl Card {
     pub fn draw_seven_cards() -> [Card; 7] {
         Card::draw_without_replacement::<7>()
     }
+
+    pub fn suit_to_string(&self) -> String {
+        match self.suit() {
+            0 => String::from("♣"),
+            1 => String::from("♦"),
+            2 => String::from("♥"),
+            3 => String::from("♠"),
+            _ => String::from("?"),
+        }
+    }
+
+    pub fn index_to_string(&self) -> String {
+        let one_based_index = self.index() + 1;
+        match one_based_index {
+            1 => String::from("A"),
+            11 => String::from("J"),
+            12 => String::from("Q"),
+            13 => String::from("K"),
+            _ => one_based_index.to_string(),
+        }
+    }
+
+    /// Return owned string representing the card. Examples:
+    /// K♥ A♣ Q♥ 3♦ 7 8♠ 2♥
+    pub fn to_string(&self) -> String {
+        format!("{}{}", self.index_to_string(), self.suit_to_string())
+    }
 }
 
 fn main() {
     for id in 0..52 {
         let card = Card { id };
-        println!("Sorted:  Suit: {}, Index: {}", card.suit(), card.index());
+        println!("Sorted:  {}", card.to_string());
     }
+    println!("Five Cards: ");
     for card in Card::draw_five_cards() {
-        println!(
-            "Five Cards:  Suit: {}, Index: {}",
-            card.suit(),
-            card.index()
-        );
+        print!("{} ", card.to_string());
     }
+    println!("");
+    println!("Seven Cards: ");
     for card in Card::draw_seven_cards() {
-        println!(
-            "Seven Cards:  Suit: {}, Index: {}",
-            card.suit(),
-            card.index()
-        );
+        print!("{} ", card.to_string());
     }
+    println!("");
 }
