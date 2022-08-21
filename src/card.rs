@@ -37,6 +37,15 @@ impl Card {
         }
 
         // HACK -- this is a terrible mess.
+        //
+        // Proposal:
+        //
+        // (1) use the hash set as the cannonical "hand" and pre-allocate it.
+        // (1a) consider using a BTreeSet instead
+        // (2) Create a new "deck" class that has a shuffle method.
+        // (2a) Then just create views into that data structure (or copy into a buffer)
+        //
+        // I suspect that 2a will be faster, depending on the shuffle implementation.
         let hand: [Card; N] = array_init::array_init(|i| card_set.iter().nth(i).unwrap().clone());
         hand
     }
