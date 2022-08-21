@@ -1,3 +1,5 @@
+use rand::Rng;
+
 pub struct Card {
     id: i32,
 }
@@ -18,6 +20,12 @@ impl Card {
 fn main() {
     for id in 0..52 {
         let card = Card { id };
-        println!("Suit: {}, Index: {}", card.suit(), card.index());
+        println!("Sorted:  Suit: {}, Index: {}", card.suit(), card.index());
+    }
+    for _ in 0..10 {
+        let card = Card {
+            id: rand::thread_rng().gen_range(0..51),
+        };
+        println!("Random:  Suit: {}, Index: {}", card.suit(), card.index());
     }
 }
