@@ -1,9 +1,8 @@
 use array_init;
 use rand::Rng;
-use std::collections::HashSet;
 use std::fmt;
 
-#[derive(PartialEq, Eq, Hash, Clone)]
+#[derive(PartialEq, PartialOrd)]
 pub struct Card {
     pub id: i32,
 }
@@ -26,27 +25,37 @@ impl Card {
         }
     }
 
+    /// Check for duplicates in the array, starting with `start_index`.
+    /// Return the index of the first duplicate found.
+    /// The `start_index` parameter allows the search to resume after replacing
+    /// a duplicate entry.
+    fn check_for_duplicates<const N: usize>(
+        start_index: usize,
+        cards: &[Card; N],
+    ) -> Option<usize> {
+        for i in start_index..N {
+            for j in 0..i {
+                if cards[i] == cards[j] {
+                    return Some(i);
+                }
+            }
+        }
+        return None;
+    }
+
     /// Returns an array of N cards that are sampled from the deck without replacement
     /// Note: this algorithm is efficient for small N, but is very slow as N approaches
-    /// 51. For values larger than 51 it will block forever.
+    /// 51. For values larger than 51 it will block forever. For now, this is private
+    /// to the module so that it can only be called when N << 52.
     fn draw_without_replacement<const N: usize>() -> [Card; N] {
-        // HACK -- this allocates
-        let mut card_set = HashSet::new();
-        while card_set.len() < N {
-            card_set.insert(Card::draw_random_card());
+        // Draw N cards with replacement
+        let mut hand: [Card; N] = array_init::array_init(|_| Card::draw_random_card());
+        // Replace any duplicates.
+        let mut start_index = 1;
+        while let Some(i) = Card::check_for_duplicates(start_index, &hand) {
+            hand[i] = Card::draw_random_card();
+            start_index = i;
         }
-
-        // HACK -- this is a terrible mess.
-        //
-        // Proposal:
-        //
-        // (1) use the hash set as the cannonical "hand" and pre-allocate it.
-        // (1a) consider using a BTreeSet instead
-        // (2) Create a new "deck" class that has a shuffle method.
-        // (2a) Then just create views into that data structure (or copy into a buffer)
-        //
-        // I suspect that 2a will be faster, depending on the shuffle implementation.
-        let hand: [Card; N] = array_init::array_init(|i| card_set.iter().nth(i).unwrap().clone());
         hand
     }
 
@@ -98,17 +107,8 @@ mod tests {
     fn unique_cards_in_randomly_drawn_hand_test() {
         for trial in 0..1000 {
             let cards = Card::draw_seven_cards();
-
-            println!("");
-            for my_card in cards.iter() {
-                print!("{} ", my_card);
-            }
-            println!("");
-
             for i in 1..7 {
                 for j in 0..i {
-                    println!("i: {i}, j: {j} ");
-
                     assert_ne!(
                         cards[i].id, cards[j].id,
                         "trial: {trial}, i: {i}, j: {j}, left: {}, right: {}",
