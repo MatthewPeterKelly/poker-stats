@@ -19,9 +19,9 @@ impl Card {
         self.id / 4
     }
 
-    pub fn draw_random_card() -> Card {
+    pub fn draw_random_card<R: Rng>(rng: &mut R) -> Card {
         Card {
-            id: rand::thread_rng().gen_range(0..51),
+            id: rng.gen_range(0..51),
         }
     }
 
@@ -47,24 +47,24 @@ impl Card {
     /// Note: this algorithm is efficient for small N, but is very slow as N approaches
     /// 51. For values larger than 51 it will block forever. For now, this is private
     /// to the module so that it can only be called when N << 52.
-    fn draw_without_replacement<const N: usize>() -> [Card; N] {
+    fn draw_without_replacement<const N: usize, R: Rng>(rng: &mut R) -> [Card; N] {
         // Draw N cards with replacement
-        let mut hand: [Card; N] = array_init::array_init(|_| Card::draw_random_card());
+        let mut hand: [Card; N] = array_init::array_init(|_| Card::draw_random_card(rng));
         // Replace any duplicates.
         let mut start_index = 1;
         while let Some(i) = Card::check_for_duplicates(start_index, &hand) {
-            hand[i] = Card::draw_random_card();
+            hand[i] = Card::draw_random_card(rng);
             start_index = i;
         }
         hand
     }
 
-    pub fn draw_five_cards() -> [Card; 5] {
-        Card::draw_without_replacement::<5>()
+    pub fn draw_five_cards<R: Rng>(rng: &mut R) -> [Card; 5] {
+        Card::draw_without_replacement::<5, R>(rng)
     }
 
-    pub fn draw_seven_cards() -> [Card; 7] {
-        Card::draw_without_replacement::<7>()
+    pub fn draw_seven_cards<R: Rng>(rng: &mut R) -> [Card; 7] {
+        Card::draw_without_replacement::<7, R>(rng)
     }
 
     pub fn suit_to_string(&self) -> String {
@@ -105,8 +105,10 @@ mod tests {
     /// Ensure that
     #[test]
     fn unique_cards_in_randomly_drawn_hand_test() {
+        let mut rng = rand::thread_rng();
+
         for trial in 0..1000 {
-            let cards = Card::draw_seven_cards();
+            let cards = Card::draw_seven_cards(&mut rng);
             for i in 1..7 {
                 for j in 0..i {
                     assert_ne!(
