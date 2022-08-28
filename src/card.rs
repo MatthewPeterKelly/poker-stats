@@ -101,11 +101,12 @@ impl fmt::Display for Card {
 mod tests {
 
     use crate::card::Card;
+    use rand::SeedableRng;
 
     /// Ensure that
     #[test]
     fn unique_cards_in_randomly_drawn_hand_test() {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rngs::StdRng::seed_from_u64(15234202);
 
         for trial in 0..1000 {
             let cards = Card::draw_seven_cards(&mut rng);
