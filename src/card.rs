@@ -127,7 +127,7 @@ impl<const N: usize> Hand<N> {
     /// Returns an array of N cards that are sampled from the deck without
     /// replacement Note: this algorithm is efficient for small N, but is very
     /// slow as N approaches Card::NUM_CARDS. For values larger than
-    /// (Card::NUM_CARDS-1) it will block forever. For now, this is private to
+    /// (Card::NUM_CARDS-1) t will block forever. For now, this is private to
     /// the module so that it can only be called when N << Card::NUM_CARDS.
     pub fn draw<R: Rng>(rng: &mut R) -> Hand<N> {
         // Draw N cards with replacement
@@ -141,6 +141,18 @@ impl<const N: usize> Hand<N> {
             start_index = i;
         }
         hand
+    }
+}
+
+impl<const N: usize> fmt::Display for Hand<N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let string = self
+            .cards
+            .iter()
+            .map(|x| x.to_string() + " , ")
+            .collect::<String>();
+        let string = string.trim_end_matches(" , ");
+        write!(f, "Hand: {string}")
     }
 }
 
