@@ -144,6 +144,18 @@ impl<const N: usize> Hand<N> {
     }
 }
 
+impl<const N: usize> fmt::Display for Hand<N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let string = self
+            .cards
+            .iter()
+            .map(|x| x.to_string() + ", ")
+            .collect::<String>();
+        let string = string.trim_end_matches(", ");
+        write!(f, "Hand: {string}")
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
