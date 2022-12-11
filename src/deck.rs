@@ -35,17 +35,22 @@ impl Deck {
 
     #[allow(dead_code)]
     pub fn draw_hand<const N: usize>(&self, card_names: &[&str; N]) -> Option<Hand<N>> {
-        let mut hand = Hand {
-            cards: array_init::array_init(|_| Card { id: 0 }),
+        let mut ok = true;
+        let hand = Hand {
+            cards: array_init::array_init(|i| {
+                if let Some(card) = self.draw_card(card_names[i]) {
+                    *card
+                } else {
+                    ok = false;
+                    Card { id: 0 }
+                }
+            }),
         };
-        for i in 0..N {
-            if let Some(card) = self.draw_card(card_names[i]) {
-                hand.cards[i] = *card;
-            } else {
-                return None;
-            }
+        if ok {
+            Some(hand)
+        } else {
+            None
         }
-        Some(hand)
     }
 }
 
