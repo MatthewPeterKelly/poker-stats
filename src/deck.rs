@@ -29,7 +29,7 @@ impl Deck {
     }
 
     #[allow(dead_code)]
-    pub fn draw_card(&self, card_name: &String) -> Option<&Card> {
+    pub fn draw_card(&self, card_name: &str) -> Option<&Card> {
         self.cards_by_name.get(card_name)
     }
 
@@ -39,8 +39,7 @@ impl Deck {
             cards: array_init::array_init(|_| Card { id: 0 }),
         };
         for i in 0..N {
-            // TODO:  can we use the slice directly instead?
-            if let Some(card) = self.draw_card(&String::from(card_names[i])) {
+            if let Some(card) = self.draw_card(card_names[i]) {
                 hand.cards[i] = *card;
             } else {
                 return None;
