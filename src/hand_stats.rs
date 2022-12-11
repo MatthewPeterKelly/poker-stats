@@ -58,7 +58,7 @@ where
     let mut suits = format!("");
     for (suit_id, count) in counts.iter().enumerate() {
         if count > &0 {
-            let line = format!("[{} ]: {}, ", func(suit_id), count);
+            let line = format!("[{}]: {}, ", func(suit_id), count);
             suits = suits + &line;
         }
     }
