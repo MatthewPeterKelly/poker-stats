@@ -10,6 +10,8 @@ pub struct HandScore {
     pub three_of_a_kind: bool,
     pub four_of_a_kind: bool,
     pub straight: bool,
+    pub full_house: bool,
+    pub straight_flush: bool,
 }
 
 #[allow(dead_code)]
@@ -71,6 +73,17 @@ impl HandScore {
             }
         }
     }
+
+    fn populate_derived_scores(&mut self) -> () {
+        if (self.four_of_a_kind) {
+            self.three_of_a_kind = true;
+        }
+        if (self.three_of_a_kind) {
+            self.pair = true;
+        }
+        self.straight_flush = self.straight && self.flush;
+        self.full_house = self.pair && self.three_of_a_kind;
+    }
 }
 impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -78,13 +91,16 @@ impl fmt::Display for HandScore {
             f,
             "HandScore:\n  flush: {}\n  pair: {}\n  \
             two_pair: {}\n  three_of_a_kind: {}\n  \
-            four_of_a_kind: {}\n  straight: {}",
+            four_of_a_kind: {}\n  straight: {}\n  \
+            full_house: {}\n  straight_flush: {}",
             self.flush,
             self.pair,
             self.two_pair,
             self.three_of_a_kind,
             self.four_of_a_kind,
-            self.straight
+            self.straight,
+            self.full_house,
+            self.straight_flush
         )
     }
 }
