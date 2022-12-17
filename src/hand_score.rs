@@ -6,6 +6,7 @@ use std::fmt;
 pub struct HandScore {
     pub flush: bool,
     pub pair: bool,
+    pub two_pair: bool,
 }
 
 #[allow(dead_code)]
@@ -30,7 +31,13 @@ impl HandScore {
     fn populate_simple_multiples(&mut self, hand_stats: &HandStats) -> () {
         for count in hand_stats.rank_count {
             match count {
-                2 => self.pair = true,
+                2 => {
+                    if self.pair {
+                        self.two_pair = true;
+                    } else {
+                        self.pair = true;
+                    }
+                }
                 _ => (),
             }
         }
@@ -40,8 +47,8 @@ impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "HandScore:\n  flush: {}\n  pair: {}",
-            self.flush, self.pair
+            "HandScore:\n  flush: {}\n  pair: {}\n  two_pair: {}",
+            self.flush, self.pair, self.two_pair
         )
     }
 }
