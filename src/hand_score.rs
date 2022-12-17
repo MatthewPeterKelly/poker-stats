@@ -9,6 +9,7 @@ pub struct HandScore {
     pub two_pair: bool,
     pub three_of_a_kind: bool,
     pub four_of_a_kind: bool,
+    pub straight: bool,
 }
 
 #[allow(dead_code)]
@@ -21,12 +22,36 @@ pub fn is_flush(hand_stats: &HandStats) -> bool {
     false
 }
 
+/// Check to see if there is a straight. Must work for both
+/// five and seven card hands, so it is a bit less optimized
+/// than it could be for a strictly five card hand.
+#[allow(dead_code)]
+pub fn is_straight(hand_stats: &HandStats) -> bool {
+    let mut cards_in_straight = 0;
+    for count in hand_stats.rank_count {
+        if count > 0 {
+            cards_in_straight = cards_in_straight + 1;
+        } else {
+            if cards_in_straight > 0 {
+                // We were in a straight... but found a gap.
+                return false;
+            }
+        }
+        if cards_in_straight >= 5 {
+            // Allow for early exit
+            return true;
+        }
+    }
+    cards_in_straight >= 5
+}
+
 impl HandScore {
     #[allow(dead_code)]
     pub fn new(hand_stats: &HandStats) -> HandScore {
         let mut hand_scores: HandScore = Default::default();
         hand_scores.flush = is_flush(hand_stats);
         hand_scores.populate_simple_multiples(hand_stats);
+        hand_scores.straight = is_straight(hand_stats);
         hand_scores
     }
 
@@ -51,8 +76,15 @@ impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "HandScore:\n  flush: {}\n  pair: {}\n  two_pair: {}\n  three_of_a_kind: {}\n  four_of_a_kind: {}",
-            self.flush, self.pair, self.two_pair, self.three_of_a_kind, self.four_of_a_kind
+            "HandScore:\n  flush: {}\n  pair: {}\n  \
+            two_pair: {}\n  three_of_a_kind: {}\n  \
+            four_of_a_kind: {}\n  straight: {}",
+            self.flush,
+            self.pair,
+            self.two_pair,
+            self.three_of_a_kind,
+            self.four_of_a_kind,
+            self.straight
         )
     }
 }
