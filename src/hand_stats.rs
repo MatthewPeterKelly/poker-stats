@@ -37,16 +37,6 @@ impl HandStats {
         }
         count
     }
-
-    #[allow(dead_code)]
-    pub fn is_flush(&self) -> bool {
-        for suit_count in self.suit_count {
-            if suit_count >= 5 {
-                return true;
-            }
-        }
-        false
-    }
 }
 
 /// Utility function to nicely format the counts data for the hand statistics.
@@ -72,32 +62,10 @@ impl fmt::Display for HandStats {
         let ranks = hand_stats_array_string(self.rank_count, |id| Rank { id }.to_string());
         write!(
             f,
-            "HandStats:\n  Count: {}\n  Suits: {suits}\n  Ranks: {ranks}\n  Flush: {}",
-            self.count_cards(),
-            self.is_flush()
+            "HandStats:\n  Count: {}\n  Suits: {suits}\n  Ranks: {ranks}",
+            self.count_cards()
         )
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::HandStats;
-    use crate::deck::Deck;
-
-    /// Ensure that we can draw a hand from a vector of strings, and
-    /// then do some checks on the `is_flush()` utility.
-    #[test]
-    fn minimal_check_for_hand_stats() {
-        let deck = Deck::new();
-
-        let check_flush = |cards, is_flush| {
-            let hand = deck.draw_hand(cards);
-            assert!(hand.is_some());
-            let hand_stats = HandStats::new(&hand.unwrap());
-            assert_eq!(hand_stats.is_flush(), is_flush);
-        };
-
-        check_flush(&["5♣", "T♣", "8♠", "7♣", "9♦"], false);
-        check_flush(&["5♣", "T♣", "8♣", "7♣", "9♣"], true);
-    }
-}
+// TODO:  consider adding some tests here that the stats are correct...

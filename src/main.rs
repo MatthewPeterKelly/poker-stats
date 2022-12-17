@@ -2,6 +2,7 @@
 // module so that it can be properly included in others.
 mod card;
 mod deck;
+mod hand_score;
 mod hand_stats;
 
 use crate::card::Card;
