@@ -7,6 +7,7 @@ mod hand_stats;
 
 use crate::card::Card;
 use crate::card::Hand;
+use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
 
 /// Simple demo for the `poker-stats` crate. For now it
@@ -33,10 +34,14 @@ fn main() {
     println!("{five_card_hand}");
     let hand_stats = HandStats::new(&five_card_hand);
     println!("{hand_stats}");
+    let hand_score = HandScore::new(&hand_stats);
+    println!("{hand_score}");
 
     println!();
     let seven_card_hand = Hand::<7>::draw(&mut rng);
     println!("{seven_card_hand}");
     let hand_stats = HandStats::new(&seven_card_hand);
     println!("{hand_stats}");
+    let hand_score = HandScore::new(&hand_stats);
+    println!("{hand_score}");
 }

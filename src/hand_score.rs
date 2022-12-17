@@ -4,7 +4,8 @@ use std::fmt;
 
 #[derive(Default)]
 pub struct HandScore {
-    pub is_flush: bool,
+    pub flush: bool,
+    pub pair: bool,
 }
 
 #[allow(dead_code)]
@@ -19,15 +20,29 @@ pub fn is_flush(hand_stats: &HandStats) -> bool {
 
 impl HandScore {
     #[allow(dead_code)]
-    pub fn new<const N: usize>(hand_stats: &HandStats) -> HandScore {
+    pub fn new(hand_stats: &HandStats) -> HandScore {
         let mut hand_scores: HandScore = Default::default();
-        hand_scores.is_flush = is_flush(hand_stats);
+        hand_scores.flush = is_flush(hand_stats);
+        hand_scores.populate_simple_multiples(hand_stats);
         hand_scores
+    }
+
+    fn populate_simple_multiples(&mut self, hand_stats: &HandStats) -> () {
+        for count in hand_stats.rank_count {
+            match count {
+                2 => self.pair = true,
+                _ => (),
+            }
+        }
     }
 }
 impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "HandScore:\n  is_flush: {}\n", self.is_flush)
+        write!(
+            f,
+            "HandScore:\n  flush: {}\n  pair: {}",
+            self.flush, self.pair
+        )
     }
 }
 
