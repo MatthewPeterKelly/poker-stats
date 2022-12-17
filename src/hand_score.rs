@@ -8,6 +8,7 @@ pub struct HandScore {
     pub pair: bool,
     pub two_pair: bool,
     pub three_of_a_kind: bool,
+    pub four_of_a_kind: bool,
 }
 
 #[allow(dead_code)]
@@ -40,6 +41,7 @@ impl HandScore {
                     }
                 }
                 3 => self.three_of_a_kind = true,
+                4 => self.four_of_a_kind = true,
                 _ => (),
             }
         }
@@ -49,8 +51,8 @@ impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "HandScore:\n  flush: {}\n  pair: {}\n  two_pair: {}\n  three_of_a_kind: {}",
-            self.flush, self.pair, self.two_pair, self.three_of_a_kind
+            "HandScore:\n  flush: {}\n  pair: {}\n  two_pair: {}\n  three_of_a_kind: {}\n  four_of_a_kind: {}",
+            self.flush, self.pair, self.two_pair, self.three_of_a_kind, self.four_of_a_kind
         )
     }
 }
