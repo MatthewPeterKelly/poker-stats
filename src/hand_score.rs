@@ -2,7 +2,7 @@ use crate::hand_stats::HandStats;
 
 use std::fmt;
 
-#[derive(Default)]
+#[derive(Default, PartialEq)]
 pub struct HandScore {
     pub flush: bool,
     pub pair: bool,
@@ -54,6 +54,7 @@ impl HandScore {
         hand_scores.flush = is_flush(hand_stats);
         hand_scores.populate_simple_multiples(hand_stats);
         hand_scores.straight = is_straight(hand_stats);
+        hand_scores.populate_derived_scores();
         hand_scores
     }
 
@@ -75,10 +76,10 @@ impl HandScore {
     }
 
     fn populate_derived_scores(&mut self) -> () {
-        if (self.four_of_a_kind) {
+        if self.four_of_a_kind {
             self.three_of_a_kind = true;
         }
-        if (self.three_of_a_kind) {
+        if self.three_of_a_kind {
             self.pair = true;
         }
         self.straight_flush = self.straight && self.flush;
