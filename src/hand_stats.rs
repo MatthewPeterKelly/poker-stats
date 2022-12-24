@@ -75,3 +75,4 @@ pub fn cards_are_unique<const N: usize>(hand: &Hand<N>) -> bool {
 }
 
 // TODO:  consider adding some tests here that the stats are correct...
+// Maybe covered by the hand score tests?
