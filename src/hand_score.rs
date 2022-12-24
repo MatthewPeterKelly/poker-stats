@@ -76,6 +76,7 @@ impl HandScore {
     }
 
     fn populate_derived_scores(&mut self) -> () {
+        self.full_house = self.pair && self.three_of_a_kind;
         if self.four_of_a_kind {
             self.three_of_a_kind = true;
         }
@@ -83,7 +84,6 @@ impl HandScore {
             self.pair = true;
         }
         self.straight_flush = self.straight && self.flush;
-        self.full_house = self.pair && self.three_of_a_kind;
     }
 }
 impl fmt::Display for HandScore {
