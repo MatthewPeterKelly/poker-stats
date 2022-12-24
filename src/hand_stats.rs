@@ -2,6 +2,7 @@ use crate::card::Card;
 use crate::card::Hand;
 use crate::card::Rank;
 use crate::card::Suit;
+use itertools::Itertools;
 
 use std::fmt;
 
@@ -66,6 +67,11 @@ impl fmt::Display for HandStats {
             self.count_cards()
         )
     }
+}
+
+#[allow(dead_code)]
+pub fn cards_are_unique<const N: usize>(hand: &Hand<N>) -> bool {
+    hand.cards.into_iter().unique().count() == N
 }
 
 // TODO:  consider adding some tests here that the stats are correct...

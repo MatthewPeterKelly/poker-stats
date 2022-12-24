@@ -3,22 +3,22 @@ use std::fmt;
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-#[derive(PartialEq, Eq, PartialOrd, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Debug, Copy, Clone, Hash)]
 pub struct Suit {
     pub id: usize,
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Debug, Copy, Clone, Hash)]
 pub struct Rank {
     pub id: usize,
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Debug, Copy, Clone, Hash)]
 pub struct Card {
     pub id: usize,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Hash)]
 pub struct Hand<const N: usize> {
     pub cards: [Card; N],
 }

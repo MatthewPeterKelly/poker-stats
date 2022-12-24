@@ -110,18 +110,19 @@ impl fmt::Display for HandScore {
 mod tests {
     use crate::deck::Deck;
     use crate::hand_score::HandScore;
-    use crate::hand_stats::HandStats;
+    use crate::hand_stats::{cards_are_unique, HandStats};
 
-    /// Ensure that we can draw a hand from a vector of strings, and
-    /// then do some checks on the `is_flush()` utility.
     #[test]
     fn five_card_hand_scores() {
         let deck = Deck::new();
 
         let check_hand = |cards, hand_score_soln| {
-            let hand = deck.draw_hand(cards);
-            assert!(hand.is_some());
-            let hand_stats = HandStats::new(&hand.unwrap());
+            let hand_opt = deck.draw_hand(cards);
+            assert!(hand_opt.is_some());
+            let hand = hand_opt.unwrap();
+            // Sanity check that the test author gave a valid hand
+            assert!(cards_are_unique(&hand));
+            let hand_stats = HandStats::new(&hand);
             let hand_score = HandScore::new(&hand_stats);
             assert_eq!(hand_score, hand_score_soln);
         };
