@@ -156,5 +156,30 @@ mod tests {
                 ..Default::default()
             },
         );
+        check_hand(
+            &["5♦", "9♠", "7♠", "8♦", "6♥"],
+            HandScore {
+                straight: true,
+                ..Default::default()
+            },
+        );
+        check_hand(
+            &["4♦", "5♦", "5♣", "4♣", "5♥"],
+            HandScore {
+                pair: true,
+                three_of_a_kind: true,
+                full_house: true,
+                ..Default::default()
+            },
+        );
+        check_hand(
+            &["9♥", "7♥", "8♥", "T♥", "J♥"],
+            HandScore {
+                straight: true,
+                flush: true,
+                straight_flush: true,
+                ..Default::default()
+            },
+        );
     }
 }
