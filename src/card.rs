@@ -18,6 +18,7 @@ pub struct Card {
     pub id: usize,
 }
 
+#[derive(PartialEq, Debug)]
 pub struct Hand<const N: usize> {
     pub cards: [Card; N],
 }

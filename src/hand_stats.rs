@@ -5,7 +5,7 @@ use crate::card::Suit;
 
 use std::fmt;
 
-#[derive(Default)]
+#[derive(Default, PartialEq, Debug)]
 pub struct HandStats {
     pub rank_count: [usize; Rank::NUM_RANKS],
     pub suit_count: [usize; Suit::NUM_SUITS],

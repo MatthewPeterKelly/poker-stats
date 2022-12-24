@@ -2,7 +2,7 @@ use crate::hand_stats::HandStats;
 
 use std::fmt;
 
-#[derive(Default, PartialEq)]
+#[derive(Default, PartialEq, Debug)]
 pub struct HandScore {
     pub flush: bool,
     pub pair: bool,
@@ -109,23 +109,52 @@ impl fmt::Display for HandScore {
 #[cfg(test)]
 mod tests {
     use crate::deck::Deck;
-    use crate::hand_score::is_flush;
+    use crate::hand_score::HandScore;
     use crate::hand_stats::HandStats;
 
     /// Ensure that we can draw a hand from a vector of strings, and
     /// then do some checks on the `is_flush()` utility.
     #[test]
-    fn minimal_check_for_hand_stats() {
+    fn five_card_hand_scores() {
         let deck = Deck::new();
 
-        let check_flush = |cards, is_flush_soln| {
+        let check_hand = |cards, hand_score_soln| {
             let hand = deck.draw_hand(cards);
             assert!(hand.is_some());
             let hand_stats = HandStats::new(&hand.unwrap());
-            assert_eq!(is_flush(&hand_stats), is_flush_soln);
+            let hand_score = HandScore::new(&hand_stats);
+            assert_eq!(hand_score, hand_score_soln);
         };
 
-        check_flush(&["5♣", "T♣", "8♠", "7♣", "9♦"], false);
-        check_flush(&["5♣", "T♣", "8♣", "7♣", "9♣"], true);
+        check_hand(
+            &["5♣", "8♣", "8♠", "7♣", "9♦"],
+            HandScore {
+                pair: true,
+                ..Default::default()
+            },
+        );
+        check_hand(
+            &["5♣", "9♣", "8♣", "7♣", "2♣"],
+            HandScore {
+                flush: true,
+                ..Default::default()
+            },
+        );
+        check_hand(
+            &["5♣", "4♦", "7♣", "7♦", "4♥"],
+            HandScore {
+                pair: true,
+                two_pair: true,
+                ..Default::default()
+            },
+        );
+        check_hand(
+            &["5♣", "4♦", "7♣", "5♦", "5♥"],
+            HandScore {
+                pair: true,
+                three_of_a_kind: true,
+                ..Default::default()
+            },
+        );
     }
 }
