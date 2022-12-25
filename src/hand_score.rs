@@ -1,4 +1,7 @@
-use crate::hand_stats::HandStats;
+use crate::{
+    deck::Deck,
+    hand_stats::{cards_are_unique, HandStats},
+};
 
 use std::fmt;
 
@@ -106,42 +109,51 @@ impl fmt::Display for HandScore {
     }
 }
 
+#[allow(dead_code)]
+fn check_hand_score_is_valid<const N: usize>(
+    deck: &Deck,
+    cards: &[&str; N],
+    hand_score_soln: HandScore,
+) -> () {
+    let hand_opt = deck.draw_hand(cards);
+    assert!(hand_opt.is_some());
+    let hand = hand_opt.unwrap();
+    // Sanity check that the test author gave a valid hand
+    assert!(cards_are_unique(&hand));
+    let hand_stats = HandStats::new(&hand);
+    let hand_score = HandScore::new(&hand_stats);
+    assert_eq!(hand_score, hand_score_soln);
+}
+
 #[cfg(test)]
 mod tests {
     use crate::deck::Deck;
     use crate::hand_score::HandScore;
-    use crate::hand_stats::{cards_are_unique, HandStats};
+
+    use super::check_hand_score_is_valid;
 
     #[test]
     fn five_card_hand_scores() {
         let deck = Deck::new();
 
-        let check_hand = |cards, hand_score_soln| {
-            let hand_opt = deck.draw_hand(cards);
-            assert!(hand_opt.is_some());
-            let hand = hand_opt.unwrap();
-            // Sanity check that the test author gave a valid hand
-            assert!(cards_are_unique(&hand));
-            let hand_stats = HandStats::new(&hand);
-            let hand_score = HandScore::new(&hand_stats);
-            assert_eq!(hand_score, hand_score_soln);
-        };
-
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["5♣", "8♣", "8♠", "7♣", "9♦"],
             HandScore {
                 pair: true,
                 ..Default::default()
             },
         );
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["5♣", "9♣", "8♣", "7♣", "2♣"],
             HandScore {
                 flush: true,
                 ..Default::default()
             },
         );
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["5♣", "4♦", "7♣", "7♦", "4♥"],
             HandScore {
                 pair: true,
@@ -149,7 +161,8 @@ mod tests {
                 ..Default::default()
             },
         );
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["5♣", "4♦", "7♣", "5♦", "5♥"],
             HandScore {
                 pair: true,
@@ -157,14 +170,16 @@ mod tests {
                 ..Default::default()
             },
         );
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["5♦", "9♠", "7♠", "8♦", "6♥"],
             HandScore {
                 straight: true,
                 ..Default::default()
             },
         );
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["4♦", "5♦", "5♣", "4♣", "5♥"],
             HandScore {
                 pair: true,
@@ -173,7 +188,8 @@ mod tests {
                 ..Default::default()
             },
         );
-        check_hand(
+        check_hand_score_is_valid(
+            &deck,
             &["9♥", "7♥", "8♥", "T♥", "J♥"],
             HandScore {
                 straight: true,
