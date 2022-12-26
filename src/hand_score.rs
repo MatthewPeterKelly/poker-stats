@@ -109,6 +109,14 @@ impl fmt::Display for HandScore {
     }
 }
 
+// TODO: This function is a bit clunky. There are two problems:
+// When it fails, it asserts here, not in the caller, making it hard to
+// tell which subtest failed. Additionally, it does most of the work to
+// convert from an array of string slices into a score, which sounds like
+// a constructor. In rust this is done with the From or Into traits on
+// the intermediate types. Syntax looks a bit tricky, but good to learn.
+// Probably should implement it for each of the intermediate types.
+
 #[allow(dead_code)]
 fn check_hand_score_is_valid<const N: usize>(
     deck: &Deck,
