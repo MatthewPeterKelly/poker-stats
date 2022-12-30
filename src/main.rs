@@ -35,7 +35,7 @@ fn main() {
     println!("{five_card_hand}");
     let hand_stats = HandStats::from(&five_card_hand);
     println!("{hand_stats}");
-    let hand_score = HandScore::new(&hand_stats);
+    let hand_score =  HandScore::from(&hand_stats);
     println!("{hand_score}");
 
     println!();
@@ -43,6 +43,6 @@ fn main() {
     println!("{seven_card_hand}");
     let hand_stats = HandStats::from(&seven_card_hand);
     println!("{hand_stats}");
-    let hand_score = HandScore::new(&hand_stats);
+    let hand_score =  HandScore::from(&hand_stats);
     println!("{hand_score}");
 }

@@ -48,16 +48,6 @@ pub fn is_straight(hand_stats: &HandStats) -> bool {
 }
 
 impl HandScore {
-    #[allow(dead_code)]
-    pub fn new(hand_stats: &HandStats) -> HandScore {
-        let mut hand_scores: HandScore = Default::default();
-        hand_scores.flush = is_flush(hand_stats);
-        hand_scores.populate_simple_multiples(hand_stats);
-        hand_scores.straight = is_straight(hand_stats);
-        hand_scores.populate_derived_scores();
-        hand_scores
-    }
-
     fn populate_simple_multiples(&mut self, hand_stats: &HandStats) -> () {
         for count in hand_stats.rank_count {
             match count {
@@ -86,6 +76,7 @@ impl HandScore {
         self.straight_flush = self.straight && self.flush;
     }
 }
+
 impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -103,6 +94,18 @@ impl fmt::Display for HandScore {
             self.full_house,
             self.straight_flush
         )
+    }
+}
+
+impl From<&HandStats> for HandScore {
+    #[allow(dead_code)]
+    fn from(hand_stats: &HandStats) -> HandScore {
+        let mut hand_scores: HandScore = Default::default();
+        hand_scores.flush = is_flush(hand_stats);
+        hand_scores.populate_simple_multiples(hand_stats);
+        hand_scores.straight = is_straight(hand_stats);
+        hand_scores.populate_derived_scores();
+        hand_scores
     }
 }
 
@@ -126,7 +129,7 @@ fn check_hand_score_is_valid<const N: usize>(
     // Sanity check that the test author gave a valid hand
     assert!(cards_are_unique(&hand));
     let hand_stats = HandStats::from(&hand);
-    let hand_score = HandScore::new(&hand_stats);
+    let hand_score =  HandScore::from(&hand_stats);
     assert_eq!(hand_score, hand_score_soln);
 }
 
