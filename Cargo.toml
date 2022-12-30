@@ -10,3 +10,4 @@ edition = "2021"
 rand = "0"
 
 array-init = "2"
+itertools = "0.10.5"

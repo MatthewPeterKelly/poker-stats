@@ -2,10 +2,13 @@
 // module so that it can be properly included in others.
 mod card;
 mod deck;
+mod hand;
+mod hand_score;
 mod hand_stats;
 
 use crate::card::Card;
-use crate::card::Hand;
+use crate::hand::Hand;
+use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
 
 /// Simple demo for the `poker-stats` crate. For now it
@@ -30,12 +33,16 @@ fn main() {
     println!();
     let five_card_hand = Hand::<5>::draw(&mut rng);
     println!("{five_card_hand}");
-    let hand_stats = HandStats::new(&five_card_hand);
+    let hand_stats = HandStats::from(&five_card_hand);
     println!("{hand_stats}");
+    let hand_score = HandScore::from(&hand_stats);
+    println!("{hand_score}");
 
     println!();
     let seven_card_hand = Hand::<7>::draw(&mut rng);
     println!("{seven_card_hand}");
-    let hand_stats = HandStats::new(&seven_card_hand);
+    let hand_stats = HandStats::from(&seven_card_hand);
     println!("{hand_stats}");
+    let hand_score = HandScore::from(&hand_stats);
+    println!("{hand_score}");
 }
