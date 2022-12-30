@@ -1,6 +1,6 @@
 use crate::card::Card;
-use rand::Rng;
 use itertools::Itertools;
+use rand::Rng;
 use std::fmt;
 
 #[derive(PartialEq, Debug, Hash)]
@@ -68,8 +68,8 @@ pub fn cards_are_unique<const N: usize>(hand: &Hand<N>) -> bool {
 #[cfg(test)]
 mod tests {
 
-    use crate::hand::Hand;
     use crate::hand::cards_are_unique;
+    use crate::hand::Hand;
     use rand::SeedableRng;
 
     /// Ensure that cards within a single hand are unique.

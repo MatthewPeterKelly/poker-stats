@@ -2,7 +2,7 @@ use crate::card::Card;
 use crate::card::Rank;
 use crate::card::Suit;
 use crate::hand::Hand;
-use itertools::Itertools;
+use std::convert::From;
 
 use std::fmt;
 
@@ -13,13 +13,6 @@ pub struct HandStats {
 }
 
 impl HandStats {
-    #[allow(dead_code)]
-    pub fn new<const N: usize>(hand: &Hand<N>) -> HandStats {
-        let mut hand_stats: HandStats = Default::default();
-        hand_stats.insert_hand(hand);
-        hand_stats
-    }
-
     pub fn insert(&mut self, card: Card) {
         self.rank_count[card.rank().id] += 1;
         self.suit_count[card.suit().id] += 1;
@@ -37,6 +30,15 @@ impl HandStats {
             count += suit_count;
         }
         count
+    }
+}
+
+impl<const N: usize> From<&Hand<N>> for HandStats {
+    #[allow(dead_code)]
+    fn from(hand: &Hand<N>) -> HandStats {
+        let mut hand_stats: HandStats = Default::default();
+        hand_stats.insert_hand(hand);
+        hand_stats
     }
 }
 

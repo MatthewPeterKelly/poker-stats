@@ -33,7 +33,7 @@ fn main() {
     println!();
     let five_card_hand = Hand::<5>::draw(&mut rng);
     println!("{five_card_hand}");
-    let hand_stats = HandStats::new(&five_card_hand);
+    let hand_stats = HandStats::from(&five_card_hand);
     println!("{hand_stats}");
     let hand_score = HandScore::new(&hand_stats);
     println!("{hand_score}");
@@ -41,7 +41,7 @@ fn main() {
     println!();
     let seven_card_hand = Hand::<7>::draw(&mut rng);
     println!("{seven_card_hand}");
-    let hand_stats = HandStats::new(&seven_card_hand);
+    let hand_stats = HandStats::from(&seven_card_hand);
     println!("{hand_stats}");
     let hand_score = HandScore::new(&hand_stats);
     println!("{hand_score}");

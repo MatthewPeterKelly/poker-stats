@@ -1,7 +1,4 @@
-use crate::{
-    deck::Deck,
-    hand_stats::{cards_are_unique, HandStats},
-};
+use crate::{deck::Deck, hand::cards_are_unique, hand_stats::HandStats};
 
 use std::fmt;
 
@@ -128,7 +125,7 @@ fn check_hand_score_is_valid<const N: usize>(
     let hand = hand_opt.unwrap();
     // Sanity check that the test author gave a valid hand
     assert!(cards_are_unique(&hand));
-    let hand_stats = HandStats::new(&hand);
+    let hand_stats = HandStats::from(&hand);
     let hand_score = HandScore::new(&hand_stats);
     assert_eq!(hand_score, hand_score_soln);
 }
