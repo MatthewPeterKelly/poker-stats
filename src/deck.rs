@@ -1,7 +1,7 @@
 use crate::card::Card;
-use crate::card::Hand;
 use crate::card::Rank;
 use crate::card::Suit;
+use crate::hand::Hand;
 use std::collections::HashMap;
 
 /// Represent a standard deck of cards with all suits and ranks present.
