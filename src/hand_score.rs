@@ -1,3 +1,4 @@
+use crate::hand::Hand;
 use crate::{deck::Deck, hand::cards_are_unique, hand_stats::HandStats};
 
 use std::fmt;
@@ -109,86 +110,74 @@ impl From<&HandStats> for HandScore {
     }
 }
 
-// TODO: This function is a bit clunky. There are two problems:
-// When it fails, it asserts here, not in the caller, making it hard to
-// tell which subtest failed. Additionally, it does most of the work to
-// convert from an array of string slices into a score, which sounds like
-// a constructor. In rust this is done with the From or Into traits on
-// the intermediate types. Syntax looks a bit tricky, but good to learn.
-// Probably should implement it for each of the intermediate types.
+impl<const N: usize> From<&Hand<N>> for HandScore {
+    #[allow(dead_code)]
+    fn from(hand: &Hand<N>) -> HandScore {
+        HandScore::from(&HandStats::from(hand))
+    }
+}
 
 #[allow(dead_code)]
-fn check_hand_score_is_valid<const N: usize>(
-    deck: &Deck,
-    cards: &[&str; N],
-    hand_score_soln: HandScore,
-) -> () {
+fn card_names_to_hand_score<const N: usize>(deck: &Deck, cards: &[&str; N]) -> HandScore {
     let hand_opt = deck.draw_hand(cards);
+    // Check that the card names can be parsed:
     assert!(hand_opt.is_some());
     let hand = hand_opt.unwrap();
-    // Sanity check that the test author gave a valid hand
+    // Check that the test author gave a valid hand
     assert!(cards_are_unique(&hand));
-    let hand_stats = HandStats::from(&hand);
-    let hand_score =  HandScore::from(&hand_stats);
-    assert_eq!(hand_score, hand_score_soln);
+    HandScore::from(&hand)
 }
 
 #[cfg(test)]
 mod tests {
     use crate::deck::Deck;
+    use crate::hand_score::card_names_to_hand_score;
     use crate::hand_score::HandScore;
-
-    use super::check_hand_score_is_valid;
 
     #[test]
     fn five_card_hand_scores() {
         let deck = Deck::new();
 
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "8♣", "8♠", "7♣", "9♦"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "8♣", "8♠", "7♣", "9♦"]),
             HandScore {
                 pair: true,
                 ..Default::default()
-            },
+            }
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "9♣", "8♣", "7♣", "2♣"],
+
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "9♣", "8♣", "7♣", "2♣"]),
             HandScore {
                 flush: true,
                 ..Default::default()
-            },
+            }
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "4♦", "7♣", "7♦", "4♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "7♦", "4♥"]),
             HandScore {
                 pair: true,
                 two_pair: true,
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "4♦", "7♣", "5♦", "5♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "5♦", "5♥"]),
             HandScore {
                 pair: true,
                 three_of_a_kind: true,
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♦", "9♠", "7♠", "8♦", "6♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♦", "9♠", "7♠", "8♦", "6♥"]),
             HandScore {
                 straight: true,
                 ..Default::default()
-            },
+            }
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["4♦", "5♦", "5♣", "4♣", "5♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["4♦", "5♦", "5♣", "4♣", "5♥"]),
             HandScore {
                 pair: true,
                 three_of_a_kind: true,
@@ -196,9 +185,8 @@ mod tests {
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["9♥", "7♥", "8♥", "T♥", "J♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["9♥", "7♥", "8♥", "T♥", "J♥"]),
             HandScore {
                 straight: true,
                 flush: true,
@@ -212,52 +200,46 @@ mod tests {
     fn seven_card_hand_scores() {
         let deck = Deck::new();
 
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "8♣", "3♣", "8♠", "7♣", "T♥", "9♦"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "8♣", "3♣", "8♠", "7♣", "T♥", "9♦"]),
             HandScore {
                 pair: true,
                 ..Default::default()
-            },
+            }
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "9♣", "8♣", "T♥", "9♦", "7♣", "2♣"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "9♣", "8♣", "T♥", "9♦", "7♣", "2♣"]),
             HandScore {
                 flush: true,
                 pair: true,
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "4♦", "7♣", "9♣", "8♣", "7♦", "4♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "9♣", "8♣", "7♦", "4♥"]),
             HandScore {
                 pair: true,
                 two_pair: true,
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♣", "4♦", "7♣", "5♦", "9♣", "8♣", "5♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "5♦", "9♣", "8♣", "5♥"]),
             HandScore {
                 pair: true,
                 three_of_a_kind: true,
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["5♦", "9♠", "7♠", "8♦", "6♥", "T♦", "J♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["5♦", "9♠", "7♠", "8♦", "6♥", "T♦", "J♥"]),
             HandScore {
                 straight: true,
                 ..Default::default()
-            },
+            }
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["4♦", "5♦", "8♦", "6♥", "5♣", "4♣", "5♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["4♦", "5♦", "8♦", "6♥", "5♣", "4♣", "5♥"]),
             HandScore {
                 pair: true,
                 three_of_a_kind: true,
@@ -265,9 +247,8 @@ mod tests {
                 ..Default::default()
             },
         );
-        check_hand_score_is_valid(
-            &deck,
-            &["9♥", "7♥", "8♥", "6♥", "5♣", "T♥", "J♥"],
+        assert_eq!(
+            card_names_to_hand_score(&deck, &["9♥", "7♥", "8♥", "6♥", "5♣", "T♥", "J♥"]),
             HandScore {
                 straight: true,
                 flush: true,
