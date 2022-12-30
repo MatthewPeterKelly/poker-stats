@@ -1,5 +1,6 @@
 use crate::card::Card;
 use rand::Rng;
+use itertools::Itertools;
 use std::fmt;
 
 #[derive(PartialEq, Debug, Hash)]
@@ -55,30 +56,32 @@ impl<const N: usize> fmt::Display for Hand<N> {
     }
 }
 
+#[allow(dead_code)]
+pub fn cards_are_unique<const N: usize>(hand: &Hand<N>) -> bool {
+    // There are probably more efficient ways to do this for small N, but this
+    // is certainly the least typing, and fast enough for simple unit tests.
+    hand.cards.into_iter().unique().count() == N
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod tests {
 
     use crate::hand::Hand;
+    use crate::hand::cards_are_unique;
     use rand::SeedableRng;
 
-    /// Ensure that
+    /// Ensure that cards within a single hand are unique.
     #[test]
     fn unique_cards_in_randomly_drawn_hand_test() {
         let mut rng = rand::rngs::StdRng::seed_from_u64(15234202);
 
-        for trial in 0..1000 {
+        for _ in 0..800 {
             let hand = Hand::<7>::draw(&mut rng);
-            for i in 1..7 {
-                for j in 0..i {
-                    assert_ne!(
-                        hand.cards[i].id, hand.cards[j].id,
-                        "trial: {trial}, i: {i}, j: {j}, left: {}, right: {}",
-                        hand.cards[i], hand.cards[j]
-                    );
-                }
-            }
+            assert!(cards_are_unique(&hand));
+            let hand = Hand::<5>::draw(&mut rng);
+            assert!(cards_are_unique(&hand));
         }
     }
 }

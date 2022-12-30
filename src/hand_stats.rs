@@ -68,11 +68,3 @@ impl fmt::Display for HandStats {
         )
     }
 }
-
-#[allow(dead_code)]
-pub fn cards_are_unique<const N: usize>(hand: &Hand<N>) -> bool {
-    hand.cards.into_iter().unique().count() == N
-}
-
-// TODO:  consider adding some tests here that the stats are correct...
-// Maybe covered by the hand score tests?
