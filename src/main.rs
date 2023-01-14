@@ -32,7 +32,7 @@ fn main() {
         }
     }
 
-    println!();
+    println!("");
     let five_card_hand = Hand::<5>::draw(&mut rng);
     println!("{five_card_hand}");
     let hand_stats = HandStats::from(&five_card_hand);
@@ -40,7 +40,7 @@ fn main() {
     let hand_score = HandScore::from(&hand_stats);
     println!("{hand_score}");
 
-    println!();
+    println!("");
     let seven_card_hand = Hand::<7>::draw(&mut rng);
     println!("{seven_card_hand}");
     let hand_stats = HandStats::from(&seven_card_hand);
@@ -48,13 +48,13 @@ fn main() {
     let hand_score = HandScore::from(&hand_stats);
     println!("{hand_score}");
 
-    // Now draw 100 random hands and check the stats!
+    // Now draw N random hands and check the stats!
+    println!("");
     let mut scores = AggregateScore::default();
-    for _ in 0..100 {
-        let hand = Hand::<5>::draw(&mut rng);
-        let hand_stats = HandStats::from(&hand);
-        let hand_score = HandScore::from(&hand_stats);
-        scores.insert(&hand_score);
+    for _ in 0..(5e4 as u32) {
+        scores.insert(&HandScore::from(&HandStats::from(&Hand::<5>::draw(
+            &mut rng,
+        ))));
     }
     println!("{scores}")
 }

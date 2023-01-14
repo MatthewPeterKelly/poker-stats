@@ -36,28 +36,45 @@ impl fmt::Display for AggregateScore {
         } else {
             0.0
         };
+        let n_pad_count = self.high_card.to_string().len();
+        let n_pad_name = "three_of_a_kind:".len();
         write!(
             f,
-            "AggregateScore:\n  high_card: {} ({}%)\n  flush: {} ({}%)\n  pair: {} ({}%)\n  \
-            two_pair: {} ({}%)\n  three_of_a_kind: {} ({}%)\n  \
-            four_of_a_kind: {} ({}%)\n  straight: {} ({}%)\n  \
-            full_house: {} ({}%)\n  straight_flush: {} ({}%)",
+            "AggregateScore:
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
+  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)",
+            "high_card:",
             self.high_card,
             (self.high_card as f64) * scale,
+            "flush:",
             self.flush,
             (self.flush as f64) * scale,
+            "pair:",
             self.pair,
             (self.pair as f64) * scale,
+            "two_pair:",
             self.two_pair,
             (self.two_pair as f64) * scale,
+            "three_of_a_kind:",
             self.three_of_a_kind,
             (self.three_of_a_kind as f64) * scale,
+            "four_of_a_kind:",
             self.four_of_a_kind,
             (self.four_of_a_kind as f64) * scale,
+            "straight:",
             self.straight,
             (self.straight as f64) * scale,
+            "full_house:",
             self.full_house,
             (self.full_house as f64) * scale,
+            "straight_flush:",
             self.straight_flush,
             (self.straight_flush as f64) * scale
         )
