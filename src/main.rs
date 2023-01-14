@@ -48,6 +48,13 @@ fn main() {
     let hand_score = HandScore::from(&hand_stats);
     println!("{hand_score}");
 
-    let scores = AggregateScore::default();
+    // Now draw 100 random hands and check the stats!
+    let mut scores = AggregateScore::default();
+    for _ in 0..100 {
+        let hand = Hand::<5>::draw(&mut rng);
+        let hand_stats = HandStats::from(&hand);
+        let hand_score = HandScore::from(&hand_stats);
+        scores.insert(&hand_score);
+    }
     println!("{scores}")
 }
