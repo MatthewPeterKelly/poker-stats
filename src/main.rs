@@ -1,11 +1,13 @@
 // Note: Each of the utility files must be added here as a
 // module so that it can be properly included in others.
+mod aggregate_score;
 mod card;
 mod deck;
 mod hand;
 mod hand_score;
 mod hand_stats;
 
+use crate::aggregate_score::AggregateScore;
 use crate::card::Card;
 use crate::hand::Hand;
 use crate::hand_score::HandScore;
@@ -45,4 +47,7 @@ fn main() {
     println!("{hand_stats}");
     let hand_score = HandScore::from(&hand_stats);
     println!("{hand_score}");
+
+    let scores = AggregateScore::default();
+    println!("{scores}")
 }
