@@ -38,45 +38,26 @@ impl fmt::Display for AggregateScore {
         };
         let n_pad_count = self.high_card.to_string().len();
         let n_pad_name = "three_of_a_kind:".len();
+        let display_member = |name, count| {
+            format!(
+                "{:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)",
+                name,
+                count,
+                scale * (count as f64)
+            )
+        };
         write!(
             f,
-            "AggregateScore:
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)
-  {:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)",
-            "high_card:",
+            "AggregateScore: ({} hands drawn)\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
             self.high_card,
-            (self.high_card as f64) * scale,
-            "flush:",
-            self.flush,
-            (self.flush as f64) * scale,
-            "pair:",
-            self.pair,
-            (self.pair as f64) * scale,
-            "two_pair:",
-            self.two_pair,
-            (self.two_pair as f64) * scale,
-            "three_of_a_kind:",
-            self.three_of_a_kind,
-            (self.three_of_a_kind as f64) * scale,
-            "four_of_a_kind:",
-            self.four_of_a_kind,
-            (self.four_of_a_kind as f64) * scale,
-            "straight:",
-            self.straight,
-            (self.straight as f64) * scale,
-            "full_house:",
-            self.full_house,
-            (self.full_house as f64) * scale,
-            "straight_flush:",
-            self.straight_flush,
-            (self.straight_flush as f64) * scale
+            display_member("flush:", self.flush),
+            display_member("pair:", self.pair),
+            display_member("two_pair:", self.two_pair),
+            display_member("three_of_a_kind:", self.three_of_a_kind),
+            display_member("four_of_a_kind:", self.four_of_a_kind),
+            display_member("straight:", self.straight),
+            display_member("full_house:", self.full_house),
+            display_member("straight_flush:", self.straight_flush),
         )
     }
 }
