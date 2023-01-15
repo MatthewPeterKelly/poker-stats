@@ -81,31 +81,36 @@ impl HandScore {
     }
 }
 
-pub fn display_hand_data<T>(hand_data: &HandData<T>, object_name: &str) -> String
+pub fn display_hand_data<T, F>(hand_data: &HandData<T>, object_name: &str, value_fmt: F) -> String
 where
     T: fmt::Display,
     T: Copy,
+    F: Fn(T) -> String,
 {
     let n_pad_name = "three_of_a_kind:".len();
     let display_member = |name, value| format!("{:<n_pad_name$}  {}", name, value);
     format!(
         "{}: \n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
         object_name,
-        display_member("high_card", hand_data.high_card),
-        display_member("flush", hand_data.flush),
-        display_member("pair", hand_data.pair),
-        display_member("two_pair", hand_data.two_pair),
-        display_member("three_of_a_kind", hand_data.three_of_a_kind),
-        display_member("four_of_a_kind", hand_data.four_of_a_kind),
-        display_member("straight", hand_data.straight),
-        display_member("full_house", hand_data.full_house),
-        display_member("straight_flush", hand_data.straight_flush),
+        display_member("high_card", value_fmt(hand_data.high_card)),
+        display_member("flush", value_fmt(hand_data.flush)),
+        display_member("pair", value_fmt(hand_data.pair)),
+        display_member("two_pair", value_fmt(hand_data.two_pair)),
+        display_member("three_of_a_kind", value_fmt(hand_data.three_of_a_kind)),
+        display_member("four_of_a_kind", value_fmt(hand_data.four_of_a_kind)),
+        display_member("straight", value_fmt(hand_data.straight)),
+        display_member("full_house", value_fmt(hand_data.full_house)),
+        display_member("straight_flush", value_fmt(hand_data.straight_flush)),
     )
 }
 
 impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", display_hand_data(&self, "HandScore"))
+        write!(
+            f,
+            "{}",
+            display_hand_data(&self, "HandScore", |value| { value.to_string() })
+        )
     }
 }
 

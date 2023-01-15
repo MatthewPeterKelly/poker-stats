@@ -1,5 +1,6 @@
 use std::fmt;
 
+use crate::hand_score::display_hand_data;
 use crate::hand_score::HandData;
 use crate::hand_score::HandScore;
 
@@ -27,27 +28,12 @@ impl fmt::Display for AggregateScore {
             0.0
         };
         let n_pad_count = self.high_card.to_string().len();
-        let n_pad_name = "three_of_a_kind:".len();
-        let display_member = |name, count| {
-            format!(
-                "{:<n_pad_name$} {:<n_pad_count$} ({:>7.3}%)",
-                name,
-                count,
-                scale * (count as f64)
-            )
-        };
+        let display_member =
+            |count| format!("{:<n_pad_count$} ({:>7.3}%)", count, scale * (count as f64));
         write!(
             f,
-            "AggregateScore: \n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
-            display_member("high_card", self.high_card),
-            display_member("flush", self.flush),
-            display_member("pair", self.pair),
-            display_member("two_pair", self.two_pair),
-            display_member("three_of_a_kind", self.three_of_a_kind),
-            display_member("four_of_a_kind", self.four_of_a_kind),
-            display_member("straight", self.straight),
-            display_member("full_house", self.full_house),
-            display_member("straight_flush", self.straight_flush),
+            "{}",
+            display_hand_data(&self, "HandScore", display_member)
         )
     }
 }
