@@ -1,30 +1,20 @@
 use std::fmt;
 
+use crate::hand_score::HandData;
 use crate::hand_score::HandScore;
 
-#[derive(Default, PartialEq, Debug)]
-pub struct AggregateScore {
-    pub high_card: u32, // total count (all hands have a high card)
-    pub flush: u32,
-    pub pair: u32,
-    pub two_pair: u32,
-    pub three_of_a_kind: u32,
-    pub four_of_a_kind: u32,
-    pub straight: u32,
-    pub full_house: u32,
-    pub straight_flush: u32,
-}
+pub type AggregateScore = HandData<u32>;
 
 impl AggregateScore {
     pub fn insert(&mut self, score: &HandScore) {
         self.high_card += 1;
-        self.flush += score.flush as u32;
         self.pair += score.pair as u32;
         self.two_pair += score.two_pair as u32;
         self.three_of_a_kind += score.three_of_a_kind as u32;
-        self.four_of_a_kind += score.four_of_a_kind as u32;
         self.straight += score.straight as u32;
+        self.flush += score.flush as u32;
         self.full_house += score.full_house as u32;
+        self.four_of_a_kind += score.four_of_a_kind as u32;
         self.straight_flush += score.straight_flush as u32;
     }
 }
@@ -48,16 +38,16 @@ impl fmt::Display for AggregateScore {
         };
         write!(
             f,
-            "AggregateScore: ({} hands drawn)\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
-            self.high_card,
-            display_member("flush:", self.flush),
-            display_member("pair:", self.pair),
-            display_member("two_pair:", self.two_pair),
-            display_member("three_of_a_kind:", self.three_of_a_kind),
-            display_member("four_of_a_kind:", self.four_of_a_kind),
-            display_member("straight:", self.straight),
-            display_member("full_house:", self.full_house),
-            display_member("straight_flush:", self.straight_flush),
+            "AggregateScore: \n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
+            display_member("high_card", self.high_card),
+            display_member("flush", self.flush),
+            display_member("pair", self.pair),
+            display_member("two_pair", self.two_pair),
+            display_member("three_of_a_kind", self.three_of_a_kind),
+            display_member("four_of_a_kind", self.four_of_a_kind),
+            display_member("straight", self.straight),
+            display_member("full_house", self.full_house),
+            display_member("straight_flush", self.straight_flush),
         )
     }
 }

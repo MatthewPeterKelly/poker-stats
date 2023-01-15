@@ -6,13 +6,13 @@ use std::fmt;
 #[derive(Default, PartialEq, Debug)]
 pub struct HandData<T> {
     pub high_card: T,
-    pub flush: T,
     pub pair: T,
     pub two_pair: T,
     pub three_of_a_kind: T,
-    pub four_of_a_kind: T,
     pub straight: T,
+    pub flush: T,
     pub full_house: T,
+    pub four_of_a_kind: T,
     pub straight_flush: T,
 }
 
@@ -83,20 +83,20 @@ impl HandScore {
 
 impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let n_pad_name = "three_of_a_kind:".len();
+        let display_member = |name, value| format!("{:<n_pad_name$}  {}", name, value);
         write!(
             f,
-            "HandScore:\n  flush: {}\n  pair: {}\n  \
-            two_pair: {}\n  three_of_a_kind: {}\n  \
-            four_of_a_kind: {}\n  straight: {}\n  \
-            full_house: {}\n  straight_flush: {}",
-            self.flush,
-            self.pair,
-            self.two_pair,
-            self.three_of_a_kind,
-            self.four_of_a_kind,
-            self.straight,
-            self.full_house,
-            self.straight_flush
+            "HandScore: \n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
+            display_member("high_card", self.high_card),
+            display_member("flush", self.flush),
+            display_member("pair", self.pair),
+            display_member("two_pair", self.two_pair),
+            display_member("three_of_a_kind", self.three_of_a_kind),
+            display_member("four_of_a_kind", self.four_of_a_kind),
+            display_member("straight", self.straight),
+            display_member("full_house", self.full_house),
+            display_member("straight_flush", self.straight_flush),
         )
     }
 }
