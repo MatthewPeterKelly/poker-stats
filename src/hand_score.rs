@@ -4,16 +4,19 @@ use crate::{deck::Deck, hand::cards_are_unique, hand_stats::HandStats};
 use std::fmt;
 
 #[derive(Default, PartialEq, Debug)]
-pub struct HandScore {
-    pub flush: bool,
-    pub pair: bool,
-    pub two_pair: bool,
-    pub three_of_a_kind: bool,
-    pub four_of_a_kind: bool,
-    pub straight: bool,
-    pub full_house: bool,
-    pub straight_flush: bool,
+pub struct HandData<T> {
+    pub high_card: T,
+    pub pair: T,
+    pub two_pair: T,
+    pub three_of_a_kind: T,
+    pub straight: T,
+    pub flush: T,
+    pub full_house: T,
+    pub four_of_a_kind: T,
+    pub straight_flush: T,
 }
+
+pub type HandScore = HandData<bool>;
 
 #[allow(dead_code)]
 pub fn is_flush(hand_stats: &HandStats) -> bool {
@@ -78,22 +81,35 @@ impl HandScore {
     }
 }
 
+pub fn display_hand_data<T, F>(hand_data: &HandData<T>, object_name: &str, value_fmt: F) -> String
+where
+    T: fmt::Display,
+    T: Copy,
+    F: Fn(T) -> String,
+{
+    let n_pad_name = "three_of_a_kind:".len();
+    let display_member = |name, value| format!("{:<n_pad_name$}  {}", name, value);
+    format!(
+        "{}: \n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}\n  {}",
+        object_name,
+        display_member("high_card", value_fmt(hand_data.high_card)),
+        display_member("flush", value_fmt(hand_data.flush)),
+        display_member("pair", value_fmt(hand_data.pair)),
+        display_member("two_pair", value_fmt(hand_data.two_pair)),
+        display_member("three_of_a_kind", value_fmt(hand_data.three_of_a_kind)),
+        display_member("four_of_a_kind", value_fmt(hand_data.four_of_a_kind)),
+        display_member("straight", value_fmt(hand_data.straight)),
+        display_member("full_house", value_fmt(hand_data.full_house)),
+        display_member("straight_flush", value_fmt(hand_data.straight_flush)),
+    )
+}
+
 impl fmt::Display for HandScore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "HandScore:\n  flush: {}\n  pair: {}\n  \
-            two_pair: {}\n  three_of_a_kind: {}\n  \
-            four_of_a_kind: {}\n  straight: {}\n  \
-            full_house: {}\n  straight_flush: {}",
-            self.flush,
-            self.pair,
-            self.two_pair,
-            self.three_of_a_kind,
-            self.four_of_a_kind,
-            self.straight,
-            self.full_house,
-            self.straight_flush
+            "{}",
+            display_hand_data(&self, "HandScore", |value| { value.to_string() })
         )
     }
 }
@@ -102,6 +118,7 @@ impl From<&HandStats> for HandScore {
     #[allow(dead_code)]
     fn from(hand_stats: &HandStats) -> HandScore {
         let mut hand_scores: HandScore = Default::default();
+        hand_scores.high_card = true;
         hand_scores.flush = is_flush(hand_stats);
         hand_scores.populate_simple_multiples(hand_stats);
         hand_scores.straight = is_straight(hand_stats);
@@ -142,6 +159,7 @@ mod tests {
             card_names_to_hand_score(&deck, &["5♣", "8♣", "8♠", "7♣", "9♦"]),
             HandScore {
                 pair: true,
+                high_card: true,
                 ..Default::default()
             }
         );
@@ -150,6 +168,7 @@ mod tests {
             card_names_to_hand_score(&deck, &["5♣", "9♣", "8♣", "7♣", "2♣"]),
             HandScore {
                 flush: true,
+                high_card: true,
                 ..Default::default()
             }
         );
@@ -158,6 +177,7 @@ mod tests {
             HandScore {
                 pair: true,
                 two_pair: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -166,6 +186,7 @@ mod tests {
             HandScore {
                 pair: true,
                 three_of_a_kind: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -173,6 +194,7 @@ mod tests {
             card_names_to_hand_score(&deck, &["5♦", "9♠", "7♠", "8♦", "6♥"]),
             HandScore {
                 straight: true,
+                high_card: true,
                 ..Default::default()
             }
         );
@@ -182,6 +204,7 @@ mod tests {
                 pair: true,
                 three_of_a_kind: true,
                 full_house: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -191,6 +214,7 @@ mod tests {
                 straight: true,
                 flush: true,
                 straight_flush: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -204,6 +228,7 @@ mod tests {
             card_names_to_hand_score(&deck, &["5♣", "8♣", "3♣", "8♠", "7♣", "T♥", "9♦"]),
             HandScore {
                 pair: true,
+                high_card: true,
                 ..Default::default()
             }
         );
@@ -212,6 +237,7 @@ mod tests {
             HandScore {
                 flush: true,
                 pair: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -220,6 +246,7 @@ mod tests {
             HandScore {
                 pair: true,
                 two_pair: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -228,6 +255,7 @@ mod tests {
             HandScore {
                 pair: true,
                 three_of_a_kind: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -235,6 +263,7 @@ mod tests {
             card_names_to_hand_score(&deck, &["5♦", "9♠", "7♠", "8♦", "6♥", "T♦", "J♥"]),
             HandScore {
                 straight: true,
+                high_card: true,
                 ..Default::default()
             }
         );
@@ -244,6 +273,7 @@ mod tests {
                 pair: true,
                 three_of_a_kind: true,
                 full_house: true,
+                high_card: true,
                 ..Default::default()
             },
         );
@@ -253,6 +283,7 @@ mod tests {
                 straight: true,
                 flush: true,
                 straight_flush: true,
+                high_card: true,
                 ..Default::default()
             },
         );

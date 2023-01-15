@@ -1,11 +1,13 @@
 // Note: Each of the utility files must be added here as a
 // module so that it can be properly included in others.
+mod aggregate_score;
 mod card;
 mod deck;
 mod hand;
 mod hand_score;
 mod hand_stats;
 
+use crate::aggregate_score::AggregateScore;
 use crate::card::Card;
 use crate::hand::Hand;
 use crate::hand_score::HandScore;
@@ -30,7 +32,7 @@ fn main() {
         }
     }
 
-    println!();
+    println!("");
     let five_card_hand = Hand::<5>::draw(&mut rng);
     println!("{five_card_hand}");
     let hand_stats = HandStats::from(&five_card_hand);
@@ -38,11 +40,21 @@ fn main() {
     let hand_score = HandScore::from(&hand_stats);
     println!("{hand_score}");
 
-    println!();
+    println!("");
     let seven_card_hand = Hand::<7>::draw(&mut rng);
     println!("{seven_card_hand}");
     let hand_stats = HandStats::from(&seven_card_hand);
     println!("{hand_stats}");
     let hand_score = HandScore::from(&hand_stats);
     println!("{hand_score}");
+
+    // Now draw N random hands and check the stats!
+    println!("");
+    let mut scores = AggregateScore::default();
+    for _ in 0..(1e4 as u32) {
+        scores.insert(&HandScore::from(&HandStats::from(&Hand::<5>::draw(
+            &mut rng,
+        ))));
+    }
+    println!("{scores}")
 }
