@@ -51,7 +51,7 @@ fn main() {
     // Now draw N random hands and check the stats!
     println!("");
     let mut scores = AggregateScore::default();
-    for _ in 0..(1e4 as u32) {
+    for _ in 0..(2e4 as u32) {
         scores.insert(&HandScore::from(&HandStats::from(&Hand::<5>::draw(
             &mut rng,
         ))));
