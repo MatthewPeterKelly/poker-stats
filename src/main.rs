@@ -7,7 +7,7 @@ mod hand;
 mod hand_score;
 mod hand_stats;
 
-use crate::aggregate_score::AggregateScore;
+use poker_stats::aggregate_score::sample_aggregate_scores;
 use crate::card::Card;
 use crate::hand::Hand;
 use crate::hand_score::HandScore;
@@ -50,11 +50,7 @@ fn main() {
 
     // Now draw N random hands and check the stats!
     println!("");
-    let mut scores = AggregateScore::default();
-    for _ in 0..(2e4 as u32) {
-        scores.insert(&HandScore::from(&HandStats::from(&Hand::<5>::draw(
-            &mut rng,
-        ))));
-    }
+    // Note: there is probably some way to deduce the type of the RNG here...
+    let scores = sample_aggregate_scores::<5, rand::rngs::ThreadRng>(&mut rng, 20_000);
     println!("{scores}")
 }

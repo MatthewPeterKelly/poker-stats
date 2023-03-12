@@ -1,12 +1,17 @@
 use std::fmt;
+use rand::Rng;
 
 use crate::hand_score::display_hand_data;
 use crate::hand_score::HandData;
 use crate::hand_score::HandScore;
+use crate::hand::Hand;
+use crate::hand_stats::HandStats;
 
 pub type AggregateScore = HandData<u32>;
 
 impl AggregateScore {
+
+    #[allow(dead_code)]
     pub fn insert(&mut self, score: &HandScore) {
         self.high_card += 1;
         self.pair += score.pair as u32;
@@ -36,6 +41,17 @@ impl fmt::Display for AggregateScore {
             display_hand_data(&self, "HandScore", display_member)
         )
     }
+}
+
+#[allow(dead_code)]
+pub fn sample_aggregate_scores<const N_HAND: usize, R: Rng>(rng: &mut R, num_samples: u32) -> AggregateScore {
+    let mut scores = AggregateScore::default();
+    for _ in 0..num_samples {
+        scores.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
+            rng,
+        ))));
+    }
+    scores
 }
 
 #[cfg(test)]
