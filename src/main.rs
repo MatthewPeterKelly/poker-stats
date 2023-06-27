@@ -6,12 +6,16 @@ mod deck;
 mod hand;
 mod hand_score;
 mod hand_stats;
+mod args;
 
 use poker_stats::aggregate_score::sample_aggregate_scores;
 use crate::card::Card;
 use crate::hand::Hand;
 use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
+
+use args::PokerArgs;
+use clap::{Parser, Arg};
 
 /// Simple demo for the `poker-stats` crate. For now it
 /// does not support any arguments. It will do three things:
@@ -20,6 +24,8 @@ use crate::hand_stats::HandStats;
 /// (2) print out the hand
 /// (3) compute and print the card stats
 fn main() {
+
+    let args: PokerArgs = PokerArgs::parse();
     let mut rng = rand::thread_rng();
 
     println!("Sorted Deck:");
