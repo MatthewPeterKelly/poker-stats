@@ -10,11 +10,16 @@ pub struct PokerArgs{
     /// Run program
     pub run_option: bool,
     
+    // Option command to display the deck of card
+    #[arg(short = 'd', long = "display")]
+    /// Run program
+    pub display_option: bool,
+
     // Optional argument to get the number of cards for playing
     // Set to default so that if one doesn't any value it goes to demo mode
-    #[arg(required = false, default_value = "default")]
+    #[arg(required = false, default_value_t = 0, requires = "run_option")]
     /// Number of cards.
-    pub cards_number: String,
+    pub cards_number: usize,
 
     // Optional argument to get the number of samples if required
     // Set to default for demo mode
