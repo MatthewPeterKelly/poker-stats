@@ -4,9 +4,11 @@ use clap::{Args, Parser, Subcommand};
 #[clap(author, version, about)]
 pub struct PokerArgs {
     #[command(subcommand)]
+    /// Draw hands or get statistics
     pub command: Option<ArgsCommands>,
 
     #[arg(long = "sorted-deck")]
+    /// To print sorted deck
     pub sorted_deck: bool,
 }
 

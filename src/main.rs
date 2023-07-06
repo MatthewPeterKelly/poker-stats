@@ -41,7 +41,7 @@ fn main() {
             }
             // If hand_number is not 5 not 7
             else {
-                println!("Invalid number. Enter 5 or 7")
+                output_specific::<7>(rand::thread_rng(), 20000);
             }
         }
 
