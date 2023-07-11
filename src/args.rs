@@ -4,31 +4,23 @@ use clap::{Args, Parser, Subcommand};
 #[clap(author, version, about)]
 pub struct PokerArgs {
     #[command(subcommand)]
-    /// Draw hands or get statistics
-    pub command: Option<ArgsCommands>,
-
-    #[arg(long = "sorted-deck")]
-    /// To print sorted deck
-    pub sorted_deck: bool,
+    pub command: Option<CommandsEnum>,
 }
 
 #[derive(Debug, Subcommand)]
-pub enum ArgsCommands {
-    /// Draw Hands
-    DrawHands(DrawHand),
+pub enum CommandsEnum {
+    /// Draw random hand, display, and score
+    DrawHand{hands_number: usize,},
 
-    /// Get statistics
-    Statistics(GetStatistics),
+    /// Compute statistics on a 5/7 card hand with N samples
+    Statistics(StatisticsSampleParameters),
+
+    /// To print sorted deck
+    SortedDeck,
 }
 
 #[derive(Debug, Args)]
-pub struct DrawHand {
-    /// Number of cards
-    pub hands_number: usize,
-}
-
-#[derive(Debug, Args)]
-pub struct GetStatistics {
+pub struct StatisticsSampleParameters {
     /// Number of cards
     pub hands_number: usize,
 
