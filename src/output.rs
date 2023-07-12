@@ -29,7 +29,7 @@ pub fn print_sorted_deck(){
         }
 }
 
-pub fn draw_hands(hands_number: usize) {
+pub fn draw_hand(hands_number: usize) {
 
     match hands_number {
         5 => {
