@@ -39,7 +39,7 @@ pub fn draw_hand(hands_number: usize) {
             compute::<7>(rand::thread_rng());
         }
         _ => {
-            println!("Invalid number. Enter 5 or 7")
+            println!("Invalid number. Enter either 5 or 7")
         }
     }
 }
@@ -60,7 +60,7 @@ pub fn getstatistics(hands_number: usize, sample_number: u32){
             println!("{scores}")
         }
         _ => {
-            println!("Invalid number. Enter 5 or 7")
+            println!("Invalid number. Enter either 5 or 7")
         }
     }
 }

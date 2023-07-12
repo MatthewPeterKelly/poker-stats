@@ -23,8 +23,8 @@ fn main() {
 
     // Matching the command
     match &args.command {
-        Some(CommandsEnum::DrawHand{ hands_number}) => 
-            draw_hand(*hands_number),
+        Some(CommandsEnum::DrawHand{ hands_size}) => 
+            draw_hand(*hands_size),
         Some(CommandsEnum::Statistics(StatisticsSampleParameters { hands_number, sample_number })) => 
             getstatistics(*hands_number, *sample_number),
         Some(CommandsEnum::SortedDeck) => 
