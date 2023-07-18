@@ -24,7 +24,6 @@ pub struct StatisticsSampleParameters {
     /// Number of cards
     pub hands_number: usize,
 
-    /// Number of samples
-    pub sample_number: u32,
+    pub number_of_samples: u32,
 }
 

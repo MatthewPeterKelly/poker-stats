@@ -5,7 +5,7 @@ use crate::hand_stats::HandStats;
 use poker_stats::aggregate_score::sample_aggregate_scores;
 use rand::rngs::ThreadRng;
 
-pub fn compute<const CARD_NUMBER: usize>(mut rng: ThreadRng) {
+pub fn draw_and_display_hand<const CARD_NUMBER: usize>(mut rng: ThreadRng) {
     println!("");
     let card_hand = Hand::<CARD_NUMBER>::draw(&mut rng);
     println!("{card_hand}");
@@ -29,14 +29,14 @@ pub fn print_sorted_deck(){
         }
 }
 
-pub fn draw_hand(hands_number: usize) {
+pub fn draw_and_display_hand_wrapper(hands_number: usize, rng: ThreadRng) {
 
     match hands_number {
         5 => {
-            compute::<5>(rand::thread_rng());
+            draw_and_display_hand::<5>(rng);
         }
         7 => {
-            compute::<7>(rand::thread_rng());
+            draw_and_display_hand::<7>(rng);
         }
         _ => {
             println!("Invalid number. Enter either 5 or 7")
@@ -44,18 +44,15 @@ pub fn draw_hand(hands_number: usize) {
     }
 }
 
-pub fn getstatistics(hands_number: usize, sample_number: u32){
-    
+pub fn sample_and_display_statistics(hands_number: usize, sample_number: u32, mut rng: ThreadRng){
+    println!("");
+
     match hands_number {
         5 => {
-            let mut rng = rand::thread_rng();
-            println!("");
             let scores = sample_aggregate_scores::<5, rand::rngs::ThreadRng>(&mut rng, sample_number);
             println!("{scores}")
         }
-        7 => {
-            let mut rng = rand::thread_rng();
-            println!("");
+        7 => {            
             let scores = sample_aggregate_scores::<5, rand::rngs::ThreadRng>(&mut rng, sample_number);
             println!("{scores}")
         }

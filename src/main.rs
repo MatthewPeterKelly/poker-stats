@@ -11,7 +11,7 @@ mod output;
 
 use crate::args::{ PokerArgs, StatisticsSampleParameters, CommandsEnum };
 use clap::Parser;
-use output::{draw_hand, print_sorted_deck, getstatistics};
+use output::{draw_and_display_hand_wrapper, print_sorted_deck, sample_and_display_statistics};
 /// Simple demo for the `poker-stats` crate. For now it
 /// does not support any arguments. It will do three things:
 /// (1) print out the cards in a sorted deck
@@ -20,15 +20,15 @@ use output::{draw_hand, print_sorted_deck, getstatistics};
 /// (3) compute and print the card stats
 fn main() {
     let args: PokerArgs = PokerArgs::parse();
-
+    let rng = rand::thread_rng();
     // Matching the command
     match &args.command {
         Some(CommandsEnum::DrawHand{ hands_size}) => 
-            draw_hand(*hands_size),
-        Some(CommandsEnum::Statistics(StatisticsSampleParameters { hands_number, sample_number })) => 
-            getstatistics(*hands_number, *sample_number),
+            draw_and_display_hand_wrapper(*hands_size, rng),
+        Some(CommandsEnum::Statistics(StatisticsSampleParameters { hands_number, number_of_samples })) => 
+            sample_and_display_statistics(*hands_number, *number_of_samples, rng),
         Some(CommandsEnum::SortedDeck) => 
             print_sorted_deck(),
-        None => draw_hand(5),
+        None => draw_and_display_hand_wrapper(5, rng),
     }
 }
