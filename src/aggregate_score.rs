@@ -1,16 +1,18 @@
-use std::fmt;
+use rand::rngs::StdRng;
 use rand::Rng;
+use std::fmt;
+use std::sync::Mutex;
+use std::thread;
 
+use crate::hand::Hand;
 use crate::hand_score::display_hand_data;
 use crate::hand_score::HandData;
 use crate::hand_score::HandScore;
-use crate::hand::Hand;
 use crate::hand_stats::HandStats;
 
 pub type AggregateScore = HandData<u32>;
 
 impl AggregateScore {
-
     #[allow(dead_code)]
     pub fn insert(&mut self, score: &HandScore) {
         self.high_card += 1;
@@ -43,15 +45,43 @@ impl fmt::Display for AggregateScore {
     }
 }
 
-#[allow(dead_code)]
-pub fn sample_aggregate_scores<const N_HAND: usize, R: Rng>(rng: &mut R, num_samples: u32) -> AggregateScore {
-    let mut scores = AggregateScore::default();
-    for _ in 0..num_samples {
-        scores.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
-            rng,
-        ))));
+fn sample<const N_HAND: usize, R: Rng>(
+    rng: &Mutex<R>,
+    aggregate: &Mutex<AggregateScore>,
+    samples: u32,
+) {
+    for _ in 0..samples {
+        let hand = Hand::<N_HAND>::draw(&mut *rng.lock().unwrap());
+        let score = HandScore::from(&HandStats::from(&hand));
+        aggregate.lock().unwrap().insert(&score);
     }
-    scores
+}
+
+#[allow(dead_code)]
+pub fn sample_aggregate_scores<const N_HAND: usize>(
+    rng: &mut StdRng,
+    samples: u32,
+    threads: u32,
+) -> AggregateScore {
+    let scores = Mutex::new(AggregateScore::default());
+    let rng = Mutex::new(rng);
+
+    let samples_per_thread = samples / threads;
+    let remainder = samples % threads;
+
+    // using scoped threads to automatically wait for everything to finish,
+    // which also allows us to use borrowed data instead of Arc
+    thread::scope(|s| {
+        for _ in 0..threads {
+            s.spawn(|| sample::<N_HAND, _>(&rng, &scores, samples_per_thread));
+        }
+
+        if remainder > 0 {
+            s.spawn(|| sample::<N_HAND, _>(&rng, &scores, remainder));
+        }
+    });
+
+    scores.into_inner().unwrap()
 }
 
 #[cfg(test)]
