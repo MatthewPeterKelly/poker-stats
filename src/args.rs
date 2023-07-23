@@ -28,3 +28,4 @@ pub struct StatisticsSampleParameters {
 
     pub number_of_threads: u32,
 }
+
