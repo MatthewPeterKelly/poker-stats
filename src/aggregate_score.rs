@@ -25,6 +25,18 @@ impl AggregateScore {
         self.four_of_a_kind += score.four_of_a_kind as u32;
         self.straight_flush += score.straight_flush as u32;
     }
+
+    pub fn add(&mut self, score: HandData<u32>) {
+        self.high_card += score.high_card;
+        self.pair += score.pair as u32;
+        self.two_pair += score.two_pair as u32;
+        self.three_of_a_kind += score.three_of_a_kind as u32;
+        self.straight += score.straight as u32;
+        self.flush += score.flush as u32;
+        self.full_house += score.full_house as u32;
+        self.four_of_a_kind += score.four_of_a_kind as u32;
+        self.straight_flush += score.straight_flush as u32;
+    }
 }
 
 impl fmt::Display for AggregateScore {
@@ -75,17 +87,17 @@ pub fn parallel_sample_aggregate_scores<const N_HAND: usize, R: Rng>(
         );
         let scores = Arc::clone(&scores);
         let mut scores_clone = scores.lock().unwrap();
-        *scores_clone = scores_temp;
+        scores_clone.add(scores_temp);
     });
 
     if num_samples_remainder > 0 {
         let scores_temp = sample_aggregate_scores::<N_HAND, ThreadRng>(
             &mut rand::thread_rng(),
-            num_samples_perthread,
+            num_samples_remainder,
         );
         let scores = Arc::clone(&scores);
         let mut scores_clone = scores.lock().unwrap();
-        *scores_clone = scores_temp;
+        scores_clone.add(scores_temp);
     }
 
     return Arc::into_inner(scores).unwrap().into_inner().unwrap();
