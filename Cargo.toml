@@ -12,3 +12,4 @@ rand = "0"
 array-init = "2"
 itertools = "0.10.5"
 clap = {version = "4.3.8", features = [ "derive" ]}
+rayon = {version = "1.7.0"}

@@ -1,14 +1,13 @@
-use rand::rngs::StdRng;
-use rand::Rng;
-use std::fmt;
-use std::sync::Mutex;
-use std::thread;
-
 use crate::hand::Hand;
 use crate::hand_score::display_hand_data;
 use crate::hand_score::HandData;
 use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
+use rand::Rng;
+use rayon::prelude::*;
+use std::fmt;
+use std::sync::Arc;
+use std::sync::Mutex;
 
 pub type AggregateScore = HandData<u32>;
 
@@ -45,43 +44,39 @@ impl fmt::Display for AggregateScore {
     }
 }
 
-fn sample<const N_HAND: usize, R: Rng>(
-    rng: &Mutex<R>,
-    aggregate: &Mutex<AggregateScore>,
-    samples: u32,
-) {
-    for _ in 0..samples {
-        let hand = Hand::<N_HAND>::draw(&mut *rng.lock().unwrap());
-        let score = HandScore::from(&HandStats::from(&hand));
-        aggregate.lock().unwrap().insert(&score);
-    }
-}
-
 #[allow(dead_code)]
-pub fn sample_aggregate_scores<const N_HAND: usize>(
-    rng: &mut StdRng,
-    samples: u32,
-    threads: u32,
+pub fn sample_aggregate_scores<const N_HAND: usize, R: Rng>(
+    _rng: &mut R,
+    num_samples: u32,
+    number_of_threads: u32,
 ) -> AggregateScore {
-    let scores = Mutex::new(AggregateScore::default());
-    let rng = Mutex::new(rng);
+    let scores = Arc::new(Mutex::new(AggregateScore::default()));
+    let num_samples_perthread = num_samples / number_of_threads;
+    let num_samples_remainder = num_samples % number_of_threads;
 
-    let samples_per_thread = samples / threads;
-    let remainder = samples % threads;
-
-    // using scoped threads to automatically wait for everything to finish,
-    // which also allows us to use borrowed data instead of Arc
-    thread::scope(|s| {
-        for _ in 0..threads {
-            s.spawn(|| sample::<N_HAND, _>(&rng, &scores, samples_per_thread));
+    (0..number_of_threads).into_par_iter().for_each(|_x| {
+        let mut scores_temp = AggregateScore::default();
+        for _ in 0..num_samples_perthread {
+            scores_temp.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
+                &mut rand::thread_rng(),
+            ))));
         }
-
-        if remainder > 0 {
-            s.spawn(|| sample::<N_HAND, _>(&rng, &scores, remainder));
-        }
+        let scores = Arc::clone(&scores);
+        let mut scores_clone = scores.lock().unwrap();
+        *scores_clone = scores_temp;
     });
 
-    scores.into_inner().unwrap()
+    if num_samples_remainder > 0 {
+        let scores1 = Arc::clone(&scores);
+        let mut scores_clone = scores1.lock().unwrap();
+        for _ in 0..num_samples_remainder {
+            scores_clone.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
+                &mut rand::thread_rng(),
+            ))));
+        }
+    }
+
+    return Arc::into_inner(scores).unwrap().into_inner().unwrap();
 }
 
 #[cfg(test)]
