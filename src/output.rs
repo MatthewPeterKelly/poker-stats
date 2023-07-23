@@ -1,8 +1,8 @@
+use crate::aggregate_score::parallel_sample_aggregate_scores;
 use crate::card::Card;
 use crate::hand::Hand;
 use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
-use poker_stats::aggregate_score::sample_aggregate_scores;
 use rand::rngs::ThreadRng;
 
 pub fn draw_and_display_hand<const CARD_NUMBER: usize>(mut rng: ThreadRng) {
@@ -53,13 +53,19 @@ pub fn sample_and_display_statistics(
 
     match hands_number {
         5 => {
-            let scores =
-                sample_aggregate_scores::<5, ThreadRng>(&mut rng, sample_number, number_of_threads);
+            let scores = parallel_sample_aggregate_scores::<5, ThreadRng>(
+                &mut rng,
+                sample_number,
+                number_of_threads,
+            );
             println!("{scores}")
         }
         7 => {
-            let scores =
-                sample_aggregate_scores::<5, ThreadRng>(&mut rng, sample_number, number_of_threads);
+            let scores = parallel_sample_aggregate_scores::<5, ThreadRng>(
+                &mut rng,
+                sample_number,
+                number_of_threads,
+            );
             println!("{scores}")
         }
         _ => {

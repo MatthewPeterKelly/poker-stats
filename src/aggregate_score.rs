@@ -3,6 +3,7 @@ use crate::hand_score::display_hand_data;
 use crate::hand_score::HandData;
 use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
+use rand::rngs::ThreadRng;
 use rand::Rng;
 use rayon::prelude::*;
 use std::fmt;
@@ -46,6 +47,19 @@ impl fmt::Display for AggregateScore {
 
 #[allow(dead_code)]
 pub fn sample_aggregate_scores<const N_HAND: usize, R: Rng>(
+    rng: &mut R,
+    num_samples: u32,
+) -> AggregateScore {
+    let mut scores = AggregateScore::default();
+    for _ in 0..num_samples {
+        scores.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
+            rng,
+        ))));
+    }
+    scores
+}
+
+pub fn parallel_sample_aggregate_scores<const N_HAND: usize, R: Rng>(
     _rng: &mut R,
     num_samples: u32,
     number_of_threads: u32,
@@ -55,25 +69,23 @@ pub fn sample_aggregate_scores<const N_HAND: usize, R: Rng>(
     let num_samples_remainder = num_samples % number_of_threads;
 
     (0..number_of_threads).into_par_iter().for_each(|_x| {
-        let mut scores_temp = AggregateScore::default();
-        for _ in 0..num_samples_perthread {
-            scores_temp.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
-                &mut rand::thread_rng(),
-            ))));
-        }
+        let scores_temp = sample_aggregate_scores::<N_HAND, ThreadRng>(
+            &mut rand::thread_rng(),
+            num_samples_perthread,
+        );
         let scores = Arc::clone(&scores);
         let mut scores_clone = scores.lock().unwrap();
         *scores_clone = scores_temp;
     });
 
     if num_samples_remainder > 0 {
-        let scores1 = Arc::clone(&scores);
-        let mut scores_clone = scores1.lock().unwrap();
-        for _ in 0..num_samples_remainder {
-            scores_clone.insert(&HandScore::from(&HandStats::from(&Hand::<N_HAND>::draw(
-                &mut rand::thread_rng(),
-            ))));
-        }
+        let scores_temp = sample_aggregate_scores::<N_HAND, ThreadRng>(
+            &mut rand::thread_rng(),
+            num_samples_perthread,
+        );
+        let scores = Arc::clone(&scores);
+        let mut scores_clone = scores.lock().unwrap();
+        *scores_clone = scores_temp;
     }
 
     return Arc::into_inner(scores).unwrap().into_inner().unwrap();
