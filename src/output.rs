@@ -61,7 +61,7 @@ pub fn sample_and_display_statistics(
             println!("{scores}")
         }
         7 => {
-            let scores = parallel_sample_aggregate_scores::<5, ThreadRng>(
+            let scores = parallel_sample_aggregate_scores::<7, ThreadRng>(
                 &mut rng,
                 sample_number,
                 number_of_threads,

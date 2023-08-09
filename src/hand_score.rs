@@ -16,7 +16,7 @@ pub struct HandData<T> {
     pub straight_flush: T,
 }
 
-pub type HandScore = HandData<bool>;
+pub type HandScore = HandData<u32>;
 
 #[allow(dead_code)]
 pub fn is_flush(hand_stats: &HandStats) -> bool {
@@ -56,28 +56,28 @@ impl HandScore {
         for count in hand_stats.rank_count {
             match count {
                 2 => {
-                    if self.pair {
-                        self.two_pair = true;
+                    if self.pair != 0 {
+                        self.two_pair = true as u32;
                     } else {
-                        self.pair = true;
+                        self.pair = true as u32;
                     }
                 }
-                3 => self.three_of_a_kind = true,
-                4 => self.four_of_a_kind = true,
+                3 => self.three_of_a_kind = true as u32,
+                4 => self.four_of_a_kind = true as u32,
                 _ => (),
             }
         }
     }
 
     fn populate_derived_scores(&mut self) -> () {
-        self.full_house = self.pair && self.three_of_a_kind;
-        if self.four_of_a_kind {
-            self.three_of_a_kind = true;
+        self.full_house = (self.pair != 0 && self.three_of_a_kind != 0) as u32;
+        if self.four_of_a_kind != 0 {
+            self.three_of_a_kind = true as u32;
         }
-        if self.three_of_a_kind {
-            self.pair = true;
+        if self.three_of_a_kind != 0 {
+            self.pair = true as u32;
         }
-        self.straight_flush = self.straight && self.flush;
+        self.straight_flush = (self.straight != 0 && self.flush != 0) as u32;
     }
 }
 
@@ -104,24 +104,14 @@ where
     )
 }
 
-impl fmt::Display for HandScore {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            display_hand_data(&self, "HandScore", |value| { value.to_string() })
-        )
-    }
-}
-
 impl From<&HandStats> for HandScore {
     #[allow(dead_code)]
     fn from(hand_stats: &HandStats) -> HandScore {
         let mut hand_scores: HandScore = Default::default();
-        hand_scores.high_card = true;
-        hand_scores.flush = is_flush(hand_stats);
+        hand_scores.high_card = true as u32;
+        hand_scores.flush = is_flush(hand_stats) as u32;
         hand_scores.populate_simple_multiples(hand_stats);
-        hand_scores.straight = is_straight(hand_stats);
+        hand_scores.straight = is_straight(hand_stats) as u32;
         hand_scores.populate_derived_scores();
         hand_scores
     }
@@ -158,8 +148,8 @@ mod tests {
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "8♣", "8♠", "7♣", "9♦"]),
             HandScore {
-                pair: true,
-                high_card: true,
+                pair: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             }
         );
@@ -167,54 +157,54 @@ mod tests {
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "9♣", "8♣", "7♣", "2♣"]),
             HandScore {
-                flush: true,
-                high_card: true,
+                flush: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             }
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "7♦", "4♥"]),
             HandScore {
-                pair: true,
-                two_pair: true,
-                high_card: true,
+                pair: true as u32,
+                two_pair: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "5♦", "5♥"]),
             HandScore {
-                pair: true,
-                three_of_a_kind: true,
-                high_card: true,
+                pair: true as u32,
+                three_of_a_kind: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♦", "9♠", "7♠", "8♦", "6♥"]),
             HandScore {
-                straight: true,
-                high_card: true,
+                straight: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             }
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["4♦", "5♦", "5♣", "4♣", "5♥"]),
             HandScore {
-                pair: true,
-                three_of_a_kind: true,
-                full_house: true,
-                high_card: true,
+                pair: true as u32,
+                three_of_a_kind: true as u32,
+                full_house: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["9♥", "7♥", "8♥", "T♥", "J♥"]),
             HandScore {
-                straight: true,
-                flush: true,
-                straight_flush: true,
-                high_card: true,
+                straight: true as u32,
+                flush: true as u32,
+                straight_flush: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
@@ -227,63 +217,63 @@ mod tests {
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "8♣", "3♣", "8♠", "7♣", "T♥", "9♦"]),
             HandScore {
-                pair: true,
-                high_card: true,
+                pair: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             }
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "9♣", "8♣", "T♥", "9♦", "7♣", "2♣"]),
             HandScore {
-                flush: true,
-                pair: true,
-                high_card: true,
+                flush: true as u32,
+                pair: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "9♣", "8♣", "7♦", "4♥"]),
             HandScore {
-                pair: true,
-                two_pair: true,
-                high_card: true,
+                pair: true as u32,
+                two_pair: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♣", "4♦", "7♣", "5♦", "9♣", "8♣", "5♥"]),
             HandScore {
-                pair: true,
-                three_of_a_kind: true,
-                high_card: true,
+                pair: true as u32,
+                three_of_a_kind: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["5♦", "9♠", "7♠", "8♦", "6♥", "T♦", "J♥"]),
             HandScore {
-                straight: true,
-                high_card: true,
+                straight: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             }
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["4♦", "5♦", "8♦", "6♥", "5♣", "4♣", "5♥"]),
             HandScore {
-                pair: true,
-                three_of_a_kind: true,
-                full_house: true,
-                high_card: true,
+                pair: true as u32,
+                three_of_a_kind: true as u32,
+                full_house: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
         assert_eq!(
             card_names_to_hand_score(&deck, &["9♥", "7♥", "8♥", "6♥", "5♣", "T♥", "J♥"]),
             HandScore {
-                straight: true,
-                flush: true,
-                straight_flush: true,
-                high_card: true,
+                straight: true as u32,
+                flush: true as u32,
+                straight_flush: true as u32,
+                high_card: true as u32,
                 ..Default::default()
             },
         );
