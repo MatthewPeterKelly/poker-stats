@@ -30,12 +30,7 @@ fn main() {
             hands_number,
             number_of_samples,
             number_of_threads,
-        })) => sample_and_display_statistics(
-            *hands_number,
-            *number_of_samples,
-            rng,
-            *number_of_threads,
-        ),
+        })) => sample_and_display_statistics(*hands_number, *number_of_samples, *number_of_threads),
         Some(CommandsEnum::SortedDeck) => print_sorted_deck(),
         None => draw_and_display_hand_wrapper(5, rng),
     }

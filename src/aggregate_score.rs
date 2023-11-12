@@ -59,8 +59,7 @@ pub fn sample_aggregate_scores<const N_HAND: usize, R: Rng>(
     scores
 }
 
-pub fn parallel_sample_aggregate_scores<const N_HAND: usize, R: Rng>(
-    _rng: &mut R,
+pub fn parallel_sample_aggregate_scores<const N_HAND: usize>(
     num_samples: u32,
     num_threads: u32,
 ) -> AggregateScore {

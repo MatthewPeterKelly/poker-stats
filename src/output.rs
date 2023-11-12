@@ -46,26 +46,17 @@ pub fn draw_and_display_hand_wrapper(hands_number: usize, rng: ThreadRng) {
 pub fn sample_and_display_statistics(
     hands_number: usize,
     sample_number: u32,
-    mut rng: ThreadRng,
     number_of_threads: u32,
 ) {
     println!("");
 
     match hands_number {
         5 => {
-            let scores = parallel_sample_aggregate_scores::<5, ThreadRng>(
-                &mut rng,
-                sample_number,
-                number_of_threads,
-            );
+            let scores = parallel_sample_aggregate_scores::<5>(sample_number, number_of_threads);
             println!("{scores}")
         }
         7 => {
-            let scores = parallel_sample_aggregate_scores::<7, ThreadRng>(
-                &mut rng,
-                sample_number,
-                number_of_threads,
-            );
+            let scores = parallel_sample_aggregate_scores::<7>(sample_number, number_of_threads);
             println!("{scores}")
         }
         _ => {
