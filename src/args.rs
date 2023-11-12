@@ -10,7 +10,7 @@ pub struct PokerArgs {
 #[derive(Debug, Subcommand)]
 pub enum CommandsEnum {
     /// Draw random hand, display, and score
-    DrawHand{hands_size: usize,},
+    DrawHand { hands_size: usize },
 
     /// Compute statistics on a 5/7 card hand with N samples
     Statistics(StatisticsSampleParameters),
@@ -25,5 +25,7 @@ pub struct StatisticsSampleParameters {
     pub hands_number: usize,
 
     pub number_of_samples: u32,
+
+    pub number_of_threads: u32,
 }
 

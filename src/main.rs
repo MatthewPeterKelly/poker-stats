@@ -9,7 +9,7 @@ mod hand_score;
 mod hand_stats;
 mod output;
 
-use crate::args::{ PokerArgs, StatisticsSampleParameters, CommandsEnum };
+use crate::args::{CommandsEnum, PokerArgs, StatisticsSampleParameters};
 use clap::Parser;
 use output::{draw_and_display_hand_wrapper, print_sorted_deck, sample_and_display_statistics};
 /// Simple demo for the `poker-stats` crate. For now it
@@ -23,12 +23,20 @@ fn main() {
     let rng = rand::thread_rng();
     // Matching the command
     match &args.command {
-        Some(CommandsEnum::DrawHand{ hands_size}) => 
-            draw_and_display_hand_wrapper(*hands_size, rng),
-        Some(CommandsEnum::Statistics(StatisticsSampleParameters { hands_number, number_of_samples })) => 
-            sample_and_display_statistics(*hands_number, *number_of_samples, rng),
-        Some(CommandsEnum::SortedDeck) => 
-            print_sorted_deck(),
+        Some(CommandsEnum::DrawHand { hands_size }) => {
+            draw_and_display_hand_wrapper(*hands_size, rng)
+        }
+        Some(CommandsEnum::Statistics(StatisticsSampleParameters {
+            hands_number,
+            number_of_samples,
+            number_of_threads,
+        })) => sample_and_display_statistics(
+            *hands_number,
+            *number_of_samples,
+            rng,
+            *number_of_threads,
+        ),
+        Some(CommandsEnum::SortedDeck) => print_sorted_deck(),
         None => draw_and_display_hand_wrapper(5, rng),
     }
 }

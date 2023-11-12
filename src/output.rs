@@ -1,8 +1,8 @@
+use crate::aggregate_score::parallel_sample_aggregate_scores;
 use crate::card::Card;
 use crate::hand::Hand;
 use crate::hand_score::HandScore;
 use crate::hand_stats::HandStats;
-use poker_stats::aggregate_score::sample_aggregate_scores;
 use rand::rngs::ThreadRng;
 
 pub fn draw_and_display_hand<const CARD_NUMBER: usize>(mut rng: ThreadRng) {
@@ -15,22 +15,21 @@ pub fn draw_and_display_hand<const CARD_NUMBER: usize>(mut rng: ThreadRng) {
     println!("{hand_score}");
 }
 
-pub fn print_sorted_deck(){
+pub fn print_sorted_deck() {
     println!("Sorted Deck:");
 
-        for id in 0..52 {
-            let card = Card { id };
+    for id in 0..52 {
+        let card = Card { id };
 
-            if card.suit().id == 3 {
-                println!("  {}", card);
-            } else {
-                print!("  {}  ", card);
-            }
+        if card.suit().id == 3 {
+            println!("  {}", card);
+        } else {
+            print!("  {}  ", card);
         }
+    }
 }
 
 pub fn draw_and_display_hand_wrapper(hands_number: usize, rng: ThreadRng) {
-
     match hands_number {
         5 => {
             draw_and_display_hand::<5>(rng);
@@ -44,16 +43,29 @@ pub fn draw_and_display_hand_wrapper(hands_number: usize, rng: ThreadRng) {
     }
 }
 
-pub fn sample_and_display_statistics(hands_number: usize, sample_number: u32, mut rng: ThreadRng){
+pub fn sample_and_display_statistics(
+    hands_number: usize,
+    sample_number: u32,
+    mut rng: ThreadRng,
+    number_of_threads: u32,
+) {
     println!("");
 
     match hands_number {
         5 => {
-            let scores = sample_aggregate_scores::<5, rand::rngs::ThreadRng>(&mut rng, sample_number);
+            let scores = parallel_sample_aggregate_scores::<5, ThreadRng>(
+                &mut rng,
+                sample_number,
+                number_of_threads,
+            );
             println!("{scores}")
         }
-        7 => {            
-            let scores = sample_aggregate_scores::<5, rand::rngs::ThreadRng>(&mut rng, sample_number);
+        7 => {
+            let scores = parallel_sample_aggregate_scores::<7, ThreadRng>(
+                &mut rng,
+                sample_number,
+                number_of_threads,
+            );
             println!("{scores}")
         }
         _ => {
