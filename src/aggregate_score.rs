@@ -96,12 +96,14 @@ mod tests {
         let mut scores = AggregateScore::default();
 
         scores.insert(&HandScore {
+            high_card: true as u32,
             pair: true as u32,
             two_pair: true as u32,
             ..Default::default()
         });
 
         scores.insert(&HandScore {
+            high_card: true as u32,
             pair: true as u32,
             three_of_a_kind: true as u32,
             full_house: true as u32,
