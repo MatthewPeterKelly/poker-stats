@@ -10,20 +10,20 @@ use std::fmt;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-pub type AggregateScore = HandData<u32>;
+pub type AggregateScore = HandData;
 
 impl AggregateScore {
     #[allow(dead_code)]
-    pub fn insert(&mut self, score: &HandData<u32>) {
+    pub fn insert(&mut self, score: &HandData) {
         self.high_card += score.high_card;
-        self.pair += score.pair as u32;
-        self.two_pair += score.two_pair as u32;
-        self.three_of_a_kind += score.three_of_a_kind as u32;
-        self.straight += score.straight as u32;
-        self.flush += score.flush as u32;
-        self.full_house += score.full_house as u32;
-        self.four_of_a_kind += score.four_of_a_kind as u32;
-        self.straight_flush += score.straight_flush as u32;
+        self.pair += score.pair;
+        self.two_pair += score.two_pair;
+        self.three_of_a_kind += score.three_of_a_kind;
+        self.straight += score.straight;
+        self.flush += score.flush;
+        self.full_house += score.full_house;
+        self.four_of_a_kind += score.four_of_a_kind;
+        self.straight_flush += score.straight_flush;
     }
 }
 
@@ -95,17 +95,17 @@ mod tests {
         let mut scores = AggregateScore::default();
 
         scores.insert(&HandScore {
-            high_card: true as u32,
-            pair: true as u32,
-            two_pair: true as u32,
+            high_card: 1,
+            pair: 1,
+            two_pair: 1,
             ..Default::default()
         });
 
         scores.insert(&HandScore {
-            high_card: true as u32,
-            pair: true as u32,
-            three_of_a_kind: true as u32,
-            full_house: true as u32,
+            high_card: 1,
+            pair: 1,
+            three_of_a_kind: 1,
+            full_house: 1,
             ..Default::default()
         });
 
